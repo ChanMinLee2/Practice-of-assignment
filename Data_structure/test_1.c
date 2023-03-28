@@ -1,72 +1,105 @@
-#include <stdio.h> 
-#include <stdlib.h> 
+#include <stdio.h>
 
-typedef struct _sinfo    // 구조체 선언과 구조체를 sinfo라는 새로운 변수형으로 사용
+typedef struct sinfo
+            {
+                char name[8];        // 4자
+                char gender;
+                char city[8];        // 4자
+                char dept[16];       // 8자
+                float gpa;
+                int height;
+                int weight;
+            }sinfo; // 이거 안하면 호출 때마다 struct sinfo라고 해야함? >> yes 
+
+int n = 0;
+int cnt = 0;
+sinfo *slist;  // 구조체 타입 포인터 slist 선언.
+
+void to_list(FILE *fp, int Line_num) // 파일로부터 받아들인 정보를 배열에 저장하는 함수를 선언, 매개변수는 파일 포인터를 필요로 한다. 
 {
-    char name[8];        // 4자
-    char gender;
-    char city[8];        // 4자
-    char dept[16];       // 8자
-    float gpa;
-    int height;
-    int weight;
-} sinfo;
-
-// 동적 배열 : 전체 배열의 수 & 현재 배열에 들어있는 원소의 수 
-int n;            // 전체 배열의 수 
-int cnt = 0;      // 현재 배열에 있는 원소의 수, 0으로 초기화
-sinfo* slist;
-
-// fp로 시작하는 파일의 줄 수 세기
-int count_student(FILE* fp)
-{
-    char str[256];
     int i = 0;
-    while (fgets(str, 256, fp) != NULL)
-        i++;
+    int n = Line_num; // 파일의 줄 수 n으로 넣기. 
 
-    return i;
-}
-
-void read_student(FILE* fp)
-{
-    // 첫번째 줄부터 마지막 줄까지 이동하면서 한줄씩 읽어들여 slist[i]에 저장
-    // fscanf()를 사용
-    int i;
-
-    for (i = 0; i < n; i++)
+    for ( i = 0, i <= n, i++ ) 
     {
-        fscanf(fp, "%s %c %s %s %f %d %d", slist[i].name, &slist[i].gender, slist[i].city, slist[i].dept,
-            &slist[i].gpa, &slist[i].height, &slist[i].weight);
+        fscanf(fp, "%s %s %c %s %f %d %d", 
+        slist.name[i], &slist.gender, slist.city[i], slist.dept[i], &slist.gpa, &slist.height, &slist.weight ) // ?
+        // scanf라는 함수는 포인터 변수를 매개변수로 받기 때문에 일반 변수에는 &를 붙여준다. 
     }
+} 
+
+int count_list(FILE *fp) // 파일이 총 몇 줄인지 센다. open하지 않아도 실행이 가능한 코드이다. 
+{
+    int Line_count = 0;
+    char c; 
+
+    while(c = fgetc(fp) != EOF)
+    {
+        if ( c == "\n" )
+        {
+            Line_count += 1; 
+        }
+
+    }
+    rewind(fp); // line count 중 위치가 파일 마지막이 되버린 포인터를 되돌림. 
+
+    return Line_count; 
 }
 
-void write_student()
+
+
+int main(void) // malloc은 메인에서 하기. 
 {
-    int i;
+    FILE *fp = fopen ( "input.txt", "r+t");
+    FILE *Lfp = fopen ( "list.txt", "r+t");
+    
+    char input[512];
+    char tok1[32], tok2[32], tok3[32], tok4[32], tok5[32], tok6[32], tok7[32], tok8[32], tok9[32];
 
-    for (i = 0; i < n; i++)
-        printf("%s %c %s %s %.2f %d %d \n", slist[i].name, slist[i].gender, slist[i].city, slist[i].dept,
-            slist[i].gpa, slist[i].height, slist[i].weight);
-}
+    while(fgets (input, 512, fp ) != NULL)     // fgets 함수로 input 파일에서 fp라는 파일 포인터가 한 문장씩 읽는다. 
+    {
+        // 공백을 만날 떄마다 끊어서 tok(n)에 저장해줌.
+        sscanf(input, "%s%s%s%s%s%s%s%s%s", tok1, tok2, tok3, tok4, tok5, tok6, tok7, tok8, tok9);  
+        if (strcmp (tok1, "CREATE") == 0)      // 학생 정보 저장하는 동적 메모리 할당
+        {
+            slist = malloc(n * sizeof (sinfo)) // (크기 n) x (구조체의 사이즈) 만큼의 공간할당. 그 배열의 첫 자리의 포인터를 slist로 넣어줌.  
+        }
 
-int main()
-{
-    FILE* fp = fopen("list.txt", "r+t");
+        else if ( strcmp (tok1, "LOAD") == 0)  // 리스트 txt에서 학생 정보 입력 받아 이름순으로 저장
+        {
+            to_list()
 
-    n = count_student(fp);           // n이 count함수를 지나며 포인터가 파일 끝에 위치해있음.
-    rewind(fp);                      // 때문에 rewind로 포인터 위치를 파일 처음으로 되돌려줌.
+        }
 
-    slist = (sinfo*)calloc(n, sizeof(sinfo));      // calloc()함수를 사용해 동적 배열에 메모리를 할당. (calloc은 메모리 할당을 알아서 해제, malloc은 자동할당해제x )
+        else if (strcmp (tok1, "PRINT") == 0) // 저장한 모든 학생 정보를 출력. 
+        {
+            process_print ();
 
-    read_student(fp);
+        }
 
-    write_student(fp);
+        else if (strcmp (tok1, "INSERT") == 0 ) // 학생 정보 입력받아서 이름순에 맞는 위치에 삽입
+        {
 
-    fclose(fp);
 
-    system("Pause");
+        }
 
-    return 0;
+         else if (strcmp (tok1, "DELETE") == 0 ) // 입력받은 학생의 정보를 삭제할 것
+        {
+            
+
+        }
+
+        else if (strcmp (tok1, "SEARCH") == 0 ) // 입력받은 학생의 정보를 찾아 출력하기
+        {
+            process_search ( tok2 );
+
+        }
+
+        else 
+        {
+            printf("%s is not a keyword. \n", tok1);
+        }
+    }
+
 
 }
