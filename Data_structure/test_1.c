@@ -134,11 +134,11 @@ int main(void) // malloc은 메인에서 하기.
             int index = search(slist, n, tok2); 
             int index2 = index;
 
-            for(index; index < n; index ++)
+            for(n; n >= index; n --)
             {
                 
-                // 2. 인덱스 하나씩 밀기
-                slist[index + 1] = slist[index];
+                // 2. 인덱스 하나씩 밀기 (뒤에서부터)
+                slist[n + 1] = slist[n];
                 
             }
 
@@ -152,14 +152,12 @@ int main(void) // malloc은 메인에서 하기.
 
         else if (strcmp (tok1, "DELETE") == 0 ) // 입력받은 학생의 정보를 삭제할 것
         {
-            sinfo *IN_arr;
-            IN_arr = malloc(100 * sizeof(sinfo));
             int DEL_index = 0;
 
             // 원하는 정보 검색 후 맞는 정보이면 인덱스 반환 시키는 함수
-            DEL_index = search(slist, IN_arr);
+            DEL_index = search(slist, n, tok2);
 
-            // 그 인덱스 삭제. (인덱스 하나씩 땡기기)
+            // 그 인덱스 삭제. (인덱스 하나씩 땡기기 - 앞에서부터)
             for (DEL_index; DEL_index <= n; DEL_index ++)
             {
                 slist[DEL_index] = slist[DEL_index + 1];
