@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 typedef struct sinfo
             {
@@ -24,7 +25,7 @@ void read_list(FILE *fp, int Line_num) // 파일로부터 받아들인 정보를
     for ( i = 0; i <= n; i++ ) 
     {
         fscanf(fp, "%s %s %c %s %f %d %d", 
-        slist.name[i], &slist.gender, slist.city[i], slist.dept[i], &slist.gpa, &slist.height, &slist.weight ); // ?
+        slist[i].name, &slist[i].gender, slist[i].city, slist[i].dept, &slist[i].gpa, &slist[i].height, &slist[i].weight  ); // ?
         // scanf라는 함수는 포인터 변수를 매개변수로 받기 때문에 일반 변수에는 &를 붙여준다. 
     }
     
@@ -55,7 +56,8 @@ void lead_list(FILE *fp) // list 읽어서 출력함.
     for ( i = 0; i <= n; i++ ) 
     {
         fprintf(fp, "%s %s %c %s %f %d %d", 
-        slist.name[i], &slist.gender, slist.city[i], slist.dept[i], &slist.gpa, &slist.height, &slist.weight ); 
+        slist[i].name, &slist[i].gender, slist[i].city, slist[i].dept, &slist[i].gpa, &slist[i].height, &slist[i].weight ); 
+        // slist가 전역변수로 정한 것과 매개변수로 정한 것 두개가 있어 혼동을 줄 수 있음. 따라서 slist[i].member 이런식으로 접근해 오류를 방지.
          
     }
 }
@@ -67,35 +69,33 @@ void sort(sinfo arr[], int n)  // strcmp로 이름순 정렬 O(n^2) 매개변수
 
     for(i=0; i<n-1; i++) {
         for(j=i+1; j<n; j++) {
-            if(strcmp(slist[i].name, slist[j].name) > 0) 
+            if(strcmp(arr[i].name, arr[j].name) > 0) 
             {
-                temp = slist[i];
-                slist[i] = slist[j];
-                slist[j] = temp;
+                temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
             }
         }
     }
 }
 
-void insert(sinfo arr[], FILE *fp)
-{
-    int i = 0;
 
-    fscanf(fp, "%s %s %c %s %f %d %d", 
-        slist.name[i], &slist.gender, slist.city[i], slist.dept[i], &slist.gpa, &slist.height, &slist.weight);
-    
-}
-
-void search(sinfo arr[], FILE *fp)
+int search(sinfo arr[], int n, char* name)
 {
     int i;
 
     for (i = 0; i < n; i++)
     {
-        
-    } 
-
+        if (strcmp(arr[i].name, name) == 0)
+        {
+            return i;
+        }
+    }
+    return -1;
 }
+
+
+
 
 
 int main(void) // malloc은 메인에서 하기. 
@@ -130,22 +130,66 @@ int main(void) // malloc은 메인에서 하기.
 
         else if (strcmp (tok1, "INSERT") == 0 ) // 학생 정보 입력받아서 이름순에 맞는 위치에 삽입
         {
-            insert(slist, Lfp);
-            n = n + 1 ;
-            sort(slist, n);
+            // 1. 원하는 인덱스 찾기
+            int index = search(slist, n, tok2); 
+            int index2 = index;
+
+            for(index; index < n; index ++)
+            {
+                
+                // 2. 인덱스 하나씩 밀기
+                slist[index + 1] = slist[index];
+                
+            }
+
+            // 3. 넣기
+            slist[index2] = {tok2,tok3,tok4,tok5,tok6,tok7,tok8};
+        
+            // 배열 한 칸 늘리고 생긴 마지막 자리(n+1) 에다가 정보 넣기 
+            // 정렬 이런 방법으로는 안되나?
+
         }
 
         else if (strcmp (tok1, "DELETE") == 0 ) // 입력받은 학생의 정보를 삭제할 것
         {
-            
-            
+            sinfo *IN_arr;
+            IN_arr = malloc(100 * sizeof(sinfo));
+            int DEL_index = 0;
 
+            // 원하는 정보 검색 후 맞는 정보이면 인덱스 반환 시키는 함수
+            DEL_index = search(slist, IN_arr);
+
+            // 그 인덱스 삭제. (인덱스 하나씩 땡기기)
+            for (DEL_index; DEL_index <= n; DEL_index ++)
+            {
+                slist[DEL_index] = slist[DEL_index + 1];
+            }
+        
         }
 
         else if (strcmp (tok1, "SEARCH") == 0 ) // 입력받은 학생의 정보를 찾아 출력하기
         {
-            
+            // 1. 찾기 
+            int i = 0;
+            int check = 0;
 
+            for (i=0; i<n; i++)
+            {
+                if (tok2 == slist[i].name)
+                {
+                    // 2. 그 인덱스의 멤버 출력하기
+                    printf("%s %s %c %s %f %d %d", 
+                    slist[i].name, &slist[i].gender, slist[i].city, slist[i].dept, &slist[i].gpa, &slist[i].height, &slist[i].weight );
+                    check += 1;
+                }
+            }
+
+            // 없는 경우            
+            if (check = 0)
+            {
+                printf("찾으시는 학생의 정보는 저장되어 있지 않습니다. 정보를 추가해 주세요.");
+            }
+            
         }
 
         else 
@@ -155,4 +199,4 @@ int main(void) // malloc은 메인에서 하기.
     }
 
 
-}       //파일에서 구조체 형태로 학생 정보들을 입력받아 정보를 학생 단위의 하위 배열로 저장하는 방법
+}       
