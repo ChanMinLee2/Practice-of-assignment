@@ -5,30 +5,40 @@
 typedef struct sinfo
             {
                 char name[8];        // 4자
-                char* gender;
+                char gender[8];
                 char city[8];        // 4자
                 char dept[16];       // 8자
-                char* gpa;
-                char* height;
-                char* weight;
+                char gpa[10];
+                char height[10];
+                char weight[10];
             }sinfo; // 이거 안하면 호출 때마다 struct sinfo라고 해야함? >> yes 
 
 int n = 0;     // 동적 배열의 크기
 int cnt = 0;   // 현재 배열 내부에 원소개수
 sinfo *slist;  // 구조체 타입 포인터 slist 선언.
 
-void read_list(FILE *fp, int Line_num) // 파일로부터 받아들인 정보를 배열에 저장하는 함수를 선언, 매개변수는 파일 포인터를 필요로 한다. 
+void load_list() // 파일로부터 받아들인 정보를 배열에 저장하는 함수를 선언, 매개변수는 파일 포인터를 필요로 한다. 
 {
+    FILE *listfp = fopen("list.txt","r+t");
+    printf("open file");
+
     int i = 0;
-    int n = Line_num; // 파일의 줄 수 n으로 넣기. 
 
     for ( i = 0; i <= n; i++ ) 
     {
-        fscanf(fp, "%s %s %c %s %f %d %d", 
-        slist[i].name, &slist[i].gender, slist[i].city, slist[i].dept, &slist[i].gpa, &slist[i].height, &slist[i].weight  ); // ?
-        process_print();
+        fscanf(listfp, "%s", slist[i].name);
+        fscanf(listfp, "%s", slist[i].gender);
+        fscanf(listfp, "%s", slist[i].city);
+        fscanf(listfp, "%s", slist[i].dept);
+        fscanf(listfp, "%s", slist[i].gpa);
+        fscanf(listfp, "%s", slist[i].height);
+        fscanf(listfp, "%s", slist[i].weight); // ?
+        printf("plus");
         // scanf라는 함수는 포인터 변수를 매개변수로 받기 때문에 일반 변수에는 &를 붙여준다. 
     }
+    printf("read_list complete");
+    rewind(listfp);
+    fclose(listfp);
 } 
 
 int count_list(char Filename[]) // 파일이 총 몇 줄인지 센다. open하지 않아도 실행이 가능한 코드이다. 
@@ -42,7 +52,9 @@ int count_list(char Filename[]) // 파일이 총 몇 줄인지 센다. open하�
         {
             n++;
         }
-    }
+    } 
+    n++;
+
     rewind(fp); // line count 중 위치가 파일 마지막이 되버린 포인터를 되돌림. 
     fclose(fp);
 
@@ -61,22 +73,26 @@ void process_print() {
     }
 }
 
-void sort(sinfo arr[], int size_of_array)  // strcmp로 이름순 정렬 O(n^2) 매개변수로 sinfo 배열과 배열의 크기를 받는다. 
+void sort()  // strcmp로 이름순 정렬 O(n^2) 매개변수로 sinfo 배열과 배열의 크기를 받는다. 
 {
     int i, j;
     sinfo temp;
 
-    for(i=0; i<n-1; i++) {
-        for(j=i+1; j<n; j++) {
-            if(strcmp(slist[i].name, slist[j].name) > 0) 
-            {
+    for(i=0; i<n-1; i++) 
+    {    
+        for(j=i+1; j<n; j++) 
+        {                
+            if(strcmp(slist[i].name, slist[j].name) > 0)
+            {                       
                 temp = slist[i];
                 slist[i] = slist[j];
                 slist[j] = temp;
+                
             }
         }
+        
     }
-    process_print();
+    
 }
 
 int search(sinfo arr[], int n, char* name)
@@ -104,7 +120,7 @@ int main(void) // malloc은 메인에서 하기.
     while(fgets (input, 512, fp ) != NULL)     // fgets 함수로 input 파일에서 fp라는 파일 포인터가 한 문장씩 읽는다. 
     {
         // 공백을 만날 떄마다 끊어서 tok(n)에 저장해줌.
-        sscanf(input, "%s%s%s%c%s%f%d%d%s", tok1, tok2, tok3, tok4, tok5, tok6, tok7, tok8, tok9);  
+        sscanf(input, "%s%s%s%s%s%s%s%s%s", tok1, tok2, tok3, tok4, tok5, tok6, tok7, tok8, tok9);  
         if (strcmp (tok1, "CREATE") == 0)      // 학생 정보 저장하는 동적 메모리 할당
         {
             slist = malloc(n * sizeof (sinfo)); // (크기 n) x (구조체의 사이즈) 만큼의 공간할당. 그 배열의 첫 자리의 포인터를 slist로 넣어줌.  
@@ -114,11 +130,10 @@ int main(void) // malloc은 메인에서 하기.
         else if ( strcmp (tok1, "LOAD") == 0)  // 리스트 txt에서 학생 정보 입력 받아 이름순으로 저장
         {
             n = count_list(tok2); // list.txt
-            printf("%d", n);
+            printf("count line complete \n");
+            printf("%d \n", n);
 
-            read_list(list_fp, n);
-            process_print(); 
-            sort(slist, n);
+            load_list();
             
             printf("LOAD is done=======================\n");
         }
@@ -150,12 +165,12 @@ int main(void) // malloc은 메인에서 하기.
         
             
             sscanf(tok2, "%s", slist[index2].name);
-            slist[index2].gender = tok3;
+            sscanf(tok3, "%s", slist[index2].gender);
             sscanf(tok4, "%s", slist[index2].city);
             sscanf(tok5, "%s", slist[index2].dept);
-            slist[index2].gpa = tok6;
-            slist[index2].height = tok7;
-            slist[index2].weight = tok8;
+            sscanf(tok6, "%s", slist[index2].gpa);
+            sscanf(tok7, "%s", slist[index2].height);
+            sscanf(tok8, "%s", slist[index2].weight);
         
             // 배열 한 칸 늘리고 생긴 마지막 자리(n+1) 에다가 정보 넣기 
             // 정렬 이런 방법으로는 안되나?
@@ -189,8 +204,8 @@ int main(void) // malloc은 메인에서 하기.
                 if (tok2 == slist[i].name)
                 {
                     // 2. 그 인덱스의 멤버 출력하기
-                    printf("%s %s %c %s %f %d %d", 
-                    slist[i].name, &slist[i].gender, slist[i].city, slist[i].dept, &slist[i].gpa, &slist[i].height, &slist[i].weight );
+                    printf("%s %s %s %s %s %s %s", 
+                    slist[i].name, slist[i].gender, slist[i].city, slist[i].dept, slist[i].gpa, slist[i].height, slist[i].weight );
                     check += 1;
                 }
             }
