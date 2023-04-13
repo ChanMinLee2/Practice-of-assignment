@@ -4,10 +4,10 @@
 
 typedef struct sinfo
             {
-                char name[8];        // 4자
+                char name[10];        // 4자
                 char gender[8];
-                char city[8];        // 4자
-                char dept[16];       // 8자
+                char city[10];        // 4자
+                char dept[20];       // 8자
                 char gpa[10];
                 char height[10];
                 char weight[10];
@@ -17,14 +17,26 @@ int n = 0;     // 동적 배열의 크기
 int cnt = 0;   // 현재 배열 내부에 원소개수
 sinfo *slist;  // 구조체 타입 포인터 slist 선언.
 
+void process_print() {
+    for (int i = 0; i < n; i++) {
+        printf("%s ", slist[i].name);
+        printf("%s ", slist[i].gender);
+        printf("%s ", slist[i].city);  
+        printf("%s ", slist[i].dept);  
+        printf("%s ", slist[i].gpa);  
+        printf("%s ", slist[i].height);  
+        printf("%s\n", slist[i].weight);
+    }
+}
 void load_list() // 파일로부터 받아들인 정보를 배열에 저장하는 함수를 선언, 매개변수는 파일 포인터를 필요로 한다. 
 {
     FILE *listfp = fopen("list.txt","r+t");
-    printf("open file");
+    printf("open file\n");
 
     int i = 0;
+    // printf("%d",n);    
 
-    for ( i = 0; i <= n; i++ ) 
+    for ( i = 0; i < n; i++ ) 
     {
         fscanf(listfp, "%s", slist[i].name);
         fscanf(listfp, "%s", slist[i].gender);
@@ -33,12 +45,12 @@ void load_list() // 파일로부터 받아들인 정보를 배열에 저장하�
         fscanf(listfp, "%s", slist[i].gpa);
         fscanf(listfp, "%s", slist[i].height);
         fscanf(listfp, "%s", slist[i].weight); // ?
-        printf("plus");
         // scanf라는 함수는 포인터 변수를 매개변수로 받기 때문에 일반 변수에는 &를 붙여준다. 
     }
-    printf("read_list complete");
-    rewind(listfp);
     fclose(listfp);
+    printf("read_list complete\n");
+    // rewind(listfp);
+    printf("close is good\n");
 } 
 
 int count_list(char Filename[]) // 파일이 총 몇 줄인지 센다. open하지 않아도 실행이 가능한 코드이다. 
@@ -55,23 +67,12 @@ int count_list(char Filename[]) // 파일이 총 몇 줄인지 센다. open하�
     } 
     n++;
 
-    rewind(fp); // line count 중 위치가 파일 마지막이 되버린 포인터를 되돌림. 
+    // rewind(fp); // line count 중 위치가 파일 마지막이 되버린 포인터를 되돌림. 
     fclose(fp);
 
     return n;
 }
 
-void process_print() {
-    for (int i = 0; i < n; i++) {
-        printf("%s ", slist[i].name);
-        printf("%s ", slist[i].gender);
-        printf("%s ", slist[i].city);  
-        printf("%s ", slist[i].dept);  
-        printf("%s ", slist[i].gpa);  
-        printf("%s ", slist[i].height);  
-        printf("%s\n", slist[i].weight);
-    }
-}
 
 void sort()  // strcmp로 이름순 정렬 O(n^2) 매개변수로 sinfo 배열과 배열의 크기를 받는다. 
 {
@@ -112,7 +113,7 @@ int search(sinfo arr[], int n, char* name)
 int main(void) // malloc은 메인에서 하기. 
 {
     FILE *fp = fopen ( "input.txt", "r+t");     // 각 파일들 컨트롤 할 포인터들 선언 + 파일 열기. 
-    FILE *list_fp = fopen ( "list.txt", "r+t");
+    //FILE *list_fp = fopen ( "list.txt", "r+t");
 
     char input[512];
     char tok1[32], tok2[32], tok3[32], tok4[32], tok5[32], tok6[32], tok7[32], tok8[32], tok9[32];
@@ -123,7 +124,7 @@ int main(void) // malloc은 메인에서 하기.
         sscanf(input, "%s%s%s%s%s%s%s%s%s", tok1, tok2, tok3, tok4, tok5, tok6, tok7, tok8, tok9);  
         if (strcmp (tok1, "CREATE") == 0)      // 학생 정보 저장하는 동적 메모리 할당
         {
-            slist = malloc(n * sizeof (sinfo)); // (크기 n) x (구조체의 사이즈) 만큼의 공간할당. 그 배열의 첫 자리의 포인터를 slist로 넣어줌.  
+            slist = malloc(100 * sizeof (sinfo)); // (크기 n) x (구조체의 사이즈) 만큼의 공간할당. 그 배열의 첫 자리의 포인터를 slist로 넣어줌.  
             printf("CREATE is done=======================\n");
         }
         
@@ -131,10 +132,9 @@ int main(void) // malloc은 메인에서 하기.
         {
             n = count_list(tok2); // list.txt
             printf("count line complete \n");
-            printf("%d \n", n);
-
             load_list();
-            
+            printf("process good");
+            sort();
             printf("LOAD is done=======================\n");
         }
 
@@ -223,8 +223,8 @@ int main(void) // malloc은 메인에서 하기.
             printf("%s is not a keyword. \n", tok1);
         }
     }
-
-    fclose(list_fp);
+    free(slist);
+    //fclose(list_fp);
     fclose(fp);
 
 
