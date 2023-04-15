@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+int list_line = 0;
+
 typedef struct sinfo sinfo;  // 학생정보를 저장하는 구조체
 struct sinfo
 {
@@ -22,10 +24,9 @@ struct _node
 };
 
 // 단일 연결 리스트의 노드를 동적으로 생성하는 함수 create_node
-sinfo_node* create_node(sinfo info)
+sinfo_node* create_node()
 {
     sinfo_node *node = (sinfo_node*)malloc(sizeof(sinfo_node));
-    node->student_info = info;  // 노드 내부 멤버인 student_info에 info 저장 
     node->next = NULL;          // 노드 내부 멤버인 next에 NULL을 저장 ( 첫 일반 노드 )
 
     return node;
@@ -60,6 +61,40 @@ void append(sinfo_node **head, sinfo info) // headnode, 구조체 변수
 
         // curr -> next = node; // next == NULL이면 새로운 노드를 넣어줌 ?? 이거 안해도 될듯
     }
+}
+
+int count_list(char Filename[]) // 파일이 총 몇 줄인지 센다. open하지 않아도 실행이 가능한 코드이다. 
+{
+    FILE *fp = fopen(Filename, "r+t");
+    char c; 
+    
+    while((c = fgetc(fp)) != EOF)
+    {
+        if ( c == '\n' ) // 개행 문자랑 비교를 하고 싶은거면 작은따옴표로 하기.
+        {
+            list_line++;
+        }
+    } 
+    list_line++;
+    // rewind(fp);  
+    fclose(fp);
+
+    return list_line;
+}
+
+void load_list(FILE *fp , sinfo_node *node) // 파일로부터 받아들인 정보를 연결리스트에 저장하는 함수를 선언 (1회용) 
+{
+    int i = 0;
+
+    fscanf(fp, "%s", node->student_info.name);
+    fscanf(fp, "%s", node->student_info.gender);
+    fscanf(fp, "%s", node->student_info.city);
+    fscanf(fp, "%s", node->student_info.dept);
+    fscanf(fp, "%s", node->student_info.gpa);
+    fscanf(fp, "%s", node->student_info.height);
+    fscanf(fp, "%s", node->student_info.weight); 
+    
+    printf("complete one line load");
 }
 
 void print_node(sinfo_node* node) // 연결 리스트에서 입력받은 한 노드의 구조체 정보를 출력하는 함수
@@ -121,11 +156,13 @@ int main(void)
         sscanf(input, "%s%s%s%s%s%s%s%s%s", tok1, tok2, tok3, tok4, tok5, tok6, tok7, tok8, tok9);  
         if (strcmp (tok1, "CREATE") == 0)      
         {
+            sinfo_node *node = create_node();
             printf("CREATE is done=======================\n");
         }
         
         else if ( strcmp (tok1, "LOAD") == 0)  // 리스트 txt에서 학생 정보 입력 받아 이름순으로 연결리스트에 저장
         {
+
             printf("LOAD is done=======================\n");
         }
 
