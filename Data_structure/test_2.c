@@ -15,7 +15,7 @@ struct sinfo
 };
 
 typedef struct _node sinfo_node; // 학생정보를 저장하는 연결리스트의 노드 구조체
-struct sinfo_node
+struct _node
 {
     sinfo student_info; // 학생정보 구조체 변수선언 (item)
     sinfo_node* next; // 각 노드에 접근해 작업을 수행할 노드형 포인터 변수 선언(link)
@@ -31,10 +31,79 @@ sinfo_node* create_node(sinfo info)
     return node;
 }
 
+// 단일 연결 리스트에서 새로운 정보를 새로운 노드에 담아 올바른 위치에 연결해주는 함수 >> 이걸로 load하기. 
+void append(sinfo_node **head, sinfo info) // headnode, 구조체 변수 
+{
+    sinfo_node* node = *head; // head node는 create함수에서 이미 정의됨 , 왜 *head??
+    
+    if (*head == NULL)        // head node가 NULL = 비었다는 뜻 
+    {
+        *head = node;         // 새로 생성된 node의 주소를 *head에 저장
+    } 
+    else // 연결 리스트가 비어있지 않음
+    {
+        sinfo_node* curr = *head;   // 시작점(head)부터 curr로 접근
+        while(curr -> next != NULL) // 순차반복 (null이면 멈춤)
+        {
+            // 1.적절한 위치 찾기
+            if(curr->next->student_info.name[0] > info.name[0])
+                break;
+            curr = curr -> next; // ??
+        }
+        //2. 새로운 노드 생성
+        sinfo_node* new_node;
+        new_node -> student_info = info; 
+
+        //3. 링크 갱신
+        new_node->next = curr -> next;
+        curr -> next = new_node;
+
+        // curr -> next = node; // next == NULL이면 새로운 노드를 넣어줌 ?? 이거 안해도 될듯
+    }
+}
+
+void print_node(sinfo_node* node) // 연결 리스트에서 입력받은 한 노드의 구조체 정보를 출력하는 함수
+{
+    
+    printf("%s ", node -> student_info.name);
+    printf("%s ", node -> student_info.gender);
+    printf("%s ", node -> student_info.city);  
+    printf("%s ", node -> student_info.dept);  
+    printf("%s ", node -> student_info.gpa);  
+    printf("%s ", node -> student_info.height);  
+    printf("%s\n", node -> student_info.weight);
+}
+
+void search(sinfo_node **head, sinfo info)  // 원하는 정보가 연결리스트에 있는지 검색하는 함수
+{
+    sinfo_node* curr = *head;
+    
+    while(curr -> next != NULL) // 순차반복 (null이면 멈춤)
+        {
+            if(curr -> student_info.name == info.name) // 연결리스트의 한 노드가 입력받은 정보와 같으면 그 노드의 구조체 배열 출력
+            {   
+                print_node(curr);
+            }
+            curr = curr -> next; 
+        }
+}
+
+void delete(sinfo_node **head, sinfo info)
+{
+    sinfo_node* curr = *head;
+
+     while(curr -> next != NULL) // 순차반복 (null이면 멈춤)
+        {
+            if(curr -> student_info.name == info.name) // 연결리스트의 한 노드가 입력받은 정보와 같으면 삭제
+            {
+                
+            }
+        }
+}
+
 int main(void) 
 {
     FILE *fp = fopen ( "input.txt", "r+t");     // 각 파일들 컨트롤 할 포인터들 선언 + 파일 열기. 
-    
 
     char input[512];
     char tok1[32], tok2[32], tok3[32], tok4[32], tok5[32], tok6[32], tok7[32], tok8[32], tok9[32];
