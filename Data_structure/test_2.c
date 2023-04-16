@@ -2,15 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-int list_line = 0;
-
 typedef struct sinfo sinfo;  // 학생정보를 저장하는 구조체
 struct sinfo
 {
     char name[10];        // 4자
     char gender[8];
     char city[10];        // 4자
-    char dept[20];       // 8자
+    char dept[20];        // 8자
     char gpa[10];
     char height[10];
     char weight[10];
@@ -25,15 +23,14 @@ struct _node
 
 
 // 단일 연결 리스트의 노드를 동적으로 생성하는 함수 create_node
-sinfo_node* create_node()
+void create_node()
 {
-    sinfo_node *head_node; // head node를 create함수에서 정의
+    sinfo_node *head_node; // head node를 create함수에서 정의 --- 왜 할당해야함?
+    head_node = (sinfo_node*)malloc(sizeof(sinfo_node)); // 메모리 할당
     head_node -> next = NULL; // 링크 NULL로 초기화
-
-    return head_node;
 }
 
-sinfo_node * head_node;
+sinfo_node * head_node; // 전역
 
 // 단일 연결 리스트에서 새로운 정보를 새로운 노드에 담아 올바른 위치에 연결해주는 함수 >> 이걸로 load하기. 
 void append_node(sinfo info) // headnode, 구조체 변수 
@@ -58,26 +55,6 @@ void append_node(sinfo info) // headnode, 구조체 변수
     }
 }
 
-/*
-int count_list(char Filename[]) // 파일이 총 몇 줄인지 센다. open하지 않아도 실행이 가능한 코드이다. 
-{
-    FILE *fp = fopen(Filename, "r+t");
-    char c; 
-    
-    while((c = fgetc(fp)) != EOF)
-    {
-        if ( c == '\n' ) // 개행 문자랑 비교를 하고 싶은거면 작은따옴표로 하기.
-        {
-            list_line++;
-        }
-    } 
-    list_line++;
-    // rewind(fp);  
-    fclose(fp);
-
-    return list_line;
-}*/
-
 void load_list(void) // 파일로부터 받아들인 정보를 연결리스트에 저장하는 함수를 선언 (1회용) 
 {
     // 리스트열고
@@ -90,7 +67,7 @@ void load_list(void) // 파일로부터 받아들인 정보를 연결리스트�
     {
         sinfo_node * temp_node = (sinfo_node*)malloc(sizeof(sinfo_node));
         
-        sscanf("%s %s %s %s %s %s %s", temp_node->student_info.name, temp_node->student_info.gender, temp_node->student_info.city,
+        sscanf("%s%s%s%s%s%s%s", temp_node->student_info.name, temp_node->student_info.gender, temp_node->student_info.city,
         temp_node->student_info.dept, temp_node->student_info.gpa, temp_node->student_info.height, temp_node->student_info.weight);
 
         // head node(curr_node) 뒤에다 붙이고 temp 링크갱신 NULL
@@ -116,8 +93,8 @@ void print_node() // 연결 리스트에서 입력받은 한 노드의 구조체
 
 void swap(char string1[], char string2[])
 {
-    char temp_string; 
-    strcpy(temp_string,string2);
+    char temp_string[100]; 
+    strcpy(temp_string, string2);
     strcpy(string2, string1);
     strcpy(string1, temp_string);
 }
@@ -163,9 +140,8 @@ void search_node(char name[])  // 원하는 정보가 연결리스트에 있는�
             printf("%s ", curr_node -> student_info.height);  
             printf("%s\n", curr_node -> student_info.weight);
         }
-        printf("찾으시는 정보는 없습니다. \n");
+        printf("찾으시는 정보는 리스트에 없습니다. \n");
     }
-
 }
 
 void delete_node(char del_name[])
@@ -191,13 +167,13 @@ int main(void)
 
     char input[512];
     char tok1[32], tok2[32], tok3[32], tok4[32], tok5[32], tok6[32], tok7[32], tok8[32], tok9[32];
-
     while(fgets (input, 512, fp ) != NULL)      
     {
         // 공백을 만날 떄마다 끊어서 tok(n)에 저장해줌.
         sscanf(input, "%s%s%s%s%s%s%s%s%s", tok1, tok2, tok3, tok4, tok5, tok6, tok7, tok8, tok9);  
         if (strcmp (tok1, "CREATE") == 0)      
         {
+            
             create_node(); // first 노드 정의
             printf("CREATE is done=======================\n");
         }
@@ -216,7 +192,15 @@ int main(void)
 
         else if (strcmp (tok1, "INSERT") == 0 ) // 학생 정보 입력받아서 이름순에 맞는 위치에 삽입
         {
-            sinfo insert_info = {tok2, tok3, tok4, tok5, tok6, tok7, tok8};
+            sinfo insert_info;
+            strcpy(insert_info.name, tok2);
+            strcpy(insert_info.name, tok3);
+            strcpy(insert_info.name, tok4);
+            strcpy(insert_info.name, tok5);
+            strcpy(insert_info.name, tok6);
+            strcpy(insert_info.name, tok7);
+            strcpy(insert_info.name, tok8);
+
             append_node(insert_info);
             printf("INSERT is done=======================\n");
 
