@@ -23,6 +23,7 @@ struct _node
     sinfo_node* next; // 각 노드에 접근해 작업을 수행할 노드형 포인터 변수 선언(link)
 };
 
+
 // 단일 연결 리스트의 노드를 동적으로 생성하는 함수 create_node
 sinfo_node* create_node()
 {
@@ -32,27 +33,32 @@ sinfo_node* create_node()
     return head_node;
 }
 
-// 단일 연결 리스트에서 새로운 정보를 새로운 노드에 담아 올바른 위치에 연결해주는 함수 >> 이걸로 load하기. 
-void append(sinfo_node *head, sinfo info) // headnode, 구조체 변수 
-{  
-    sinfo_node * node = (sinfo_node*)malloc(sizeof(sinfo_node)); // 첫 노드를 만듦
-    strcpy(node->student_info.name, info.name);
-    strcpy(node->student_info.gender, info.gender);
-    strcpy(node->student_info.city, info.city);
-    strcpy(node->student_info.dept, info.dept);
-    strcpy(node->student_info.gpa, info.gpa);
-    strcpy(node->student_info.height, info.height);
-    strcpy(node->student_info.weight, info.weight);
+sinfo_node * head_node;
 
-    
-    
-    head -> next = node;  // head node의 링크를 첫 노드로 연결
-    node -> next = NULL;
+// 단일 연결 리스트에서 새로운 정보를 새로운 노드에 담아 올바른 위치에 연결해주는 함수 >> 이걸로 load하기. 
+void append_node(sinfo_node *head, sinfo info) // headnode, 구조체 변수 
+{  
+    sinfo_node * temp_node = (sinfo_node*)malloc(sizeof(sinfo_node)); // 0. 첫 노드를 만듦
+    strcpy(temp_node->student_info.name, info.name);
+    strcpy(temp_node->student_info.gender, info.gender);
+    strcpy(temp_node->student_info.city, info.city);
+    strcpy(temp_node->student_info.dept, info.dept);
+    strcpy(temp_node->student_info.gpa, info.gpa);
+    strcpy(temp_node->student_info.height, info.height);
+    strcpy(temp_node->student_info.weight, info.weight);
+
+    head -> next = temp_node;  // head node의 링크를 첫 노드로 연결
+    temp_node -> next = NULL;
     sinfo_node * current_node = head; // 이 함수에서 사용할 탐색용 노드 포인터 생성 
 
-    while(current_node->student_info->name > info.name)
+    while(current_node->next->student_info.name > info.name) // 1. 위치 찾기
+    {
+        temp_node -> next = current_node -> next; // 2. 링크 갱신
+        current_node -> next = temp_node;         // 2. ..
+    }
 }
 
+/*
 int count_list(char Filename[]) // 파일이 총 몇 줄인지 센다. open하지 않아도 실행이 가능한 코드이다. 
 {
     FILE *fp = fopen(Filename, "r+t");
@@ -70,29 +76,42 @@ int count_list(char Filename[]) // 파일이 총 몇 줄인지 센다. open하�
     fclose(fp);
 
     return list_line;
+}*/
+
+void load_list(FILE *fp) // 파일로부터 받아들인 정보를 연결리스트에 저장하는 함수를 선언 (1회용) 
+{
+    // 리스트열고
+    FILE *list_fp = fopen("list.txt", "r+t");
+
+    // 입력받기 (temp)
+    sinfo_node * curr_node = head_node;
+    char temp_array[100];
+    while( fgets(temp_array,100,list_fp) != NULL )
+    {
+        sinfo_node * temp_node = (sinfo_node*)malloc(sizeof(sinfo_node));
+        
+        sscanf("%s %s %s %s %s %s %s", temp_node->student_info.name, temp_node->student_info.gender, temp_node->student_info.city,
+        temp_node->student_info.dept, temp_node->student_info.gpa, temp_node->student_info.height, temp_node->student_info.weight);
+
+        // head node(curr_node) 뒤에다 붙이고 temp 링크갱신 NULL
+        curr_node -> next = temp_node;
+        temp_node -> next = NULL;
+    }
 }
 
-void load_list(FILE *fp , sinfo_node *node) // 파일로부터 받아들인 정보를 연결리스트에 저장하는 함수를 선언 (1회용) 
+void print_node() // 연결 리스트에서 입력받은 한 노드의 구조체 정보를 출력하는 함수
 {
-    fscanf(fp, "%s", node->student_info.name);
-    fscanf(fp, "%s", node->student_info.gender);
-    fscanf(fp, "%s", node->student_info.city);
-    fscanf(fp, "%s", node->student_info.dept);
-    fscanf(fp, "%s", node->student_info.gpa);
-    fscanf(fp, "%s", node->student_info.height);
-    fscanf(fp, "%s", node->student_info.weight); 
-}
-
-void print_node(sinfo_node* node) // 연결 리스트에서 입력받은 한 노드의 구조체 정보를 출력하는 함수
-{
-    
-    printf("%s ", node -> student_info.name);
-    printf("%s ", node -> student_info.gender);
-    printf("%s ", node -> student_info.city);  
-    printf("%s ", node -> student_info.dept);  
-    printf("%s ", node -> student_info.gpa);  
-    printf("%s ", node -> student_info.height);  
-    printf("%s\n", node -> student_info.weight);
+    sinfo_node * curr_node = head_node;
+    while(curr_node -> next != NULL)
+    {
+        printf("%s ", curr_node -> student_info.name);
+        printf("%s ", curr_node -> student_info.gender);
+        printf("%s ", curr_node -> student_info.city);  
+        printf("%s ", curr_node -> student_info.dept);  
+        printf("%s ", curr_node -> student_info.gpa);  
+        printf("%s ", curr_node -> student_info.height);  
+        printf("%s\n", curr_node -> student_info.weight);
+    }
 }
 
 void search(sinfo_node **head, sinfo info)  // 원하는 정보가 연결리스트에 있는지 검색하는 함수
