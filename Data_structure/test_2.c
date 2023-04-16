@@ -26,41 +26,31 @@ struct _node
 // 단일 연결 리스트의 노드를 동적으로 생성하는 함수 create_node
 sinfo_node* create_node()
 {
-    sinfo_node *node = (sinfo_node*)malloc(sizeof(sinfo_node));
-    node->next = NULL;          // 노드 내부 멤버인 next에 NULL을 저장 ( 첫 일반 노드 )
+    sinfo_node *head_node; // head node를 create함수에서 정의
+    head_node -> next = NULL; // 링크 NULL로 초기화
 
-    return node;
+    return head_node;
 }
 
 // 단일 연결 리스트에서 새로운 정보를 새로운 노드에 담아 올바른 위치에 연결해주는 함수 >> 이걸로 load하기. 
-void append(sinfo_node **head, sinfo info) // headnode, 구조체 변수 
-{
-    sinfo_node* node = *head; // head node는 create함수에서 이미 정의됨 , 왜 *head??
+void append(sinfo_node *head, sinfo info) // headnode, 구조체 변수 
+{  
+    sinfo_node * node = (sinfo_node*)malloc(sizeof(sinfo_node)); // 첫 노드를 만듦
+    strcpy(node->student_info.name, info.name);
+    strcpy(node->student_info.gender, info.gender);
+    strcpy(node->student_info.city, info.city);
+    strcpy(node->student_info.dept, info.dept);
+    strcpy(node->student_info.gpa, info.gpa);
+    strcpy(node->student_info.height, info.height);
+    strcpy(node->student_info.weight, info.weight);
+
     
-    if (*head == NULL)        // head node가 NULL = 비었다는 뜻 
-    {
-        *head = node;         // 새로 생성된 node의 주소를 *head에 저장
-    } 
-    else // 연결 리스트가 비어있지 않음
-    {
-        sinfo_node* curr = *head;   // 시작점(head)부터 curr로 접근
-        while(curr -> next != NULL) // 순차반복 (null이면 멈춤)
-        {
-            // 1.적절한 위치 찾기
-            if(curr->next->student_info.name[0] > info.name[0])
-                break;
-            curr = curr -> next; // ??
-        }
-        //2. 새로운 노드 생성
-        sinfo_node* new_node;
-        new_node -> student_info = info; 
+    
+    head -> next = node;  // head node의 링크를 첫 노드로 연결
+    node -> next = NULL;
+    sinfo_node * current_node = head; // 이 함수에서 사용할 탐색용 노드 포인터 생성 
 
-        //3. 링크 갱신
-        new_node->next = curr -> next;
-        curr -> next = new_node;
-
-        // curr -> next = node; // next == NULL이면 새로운 노드를 넣어줌 ?? 이거 안해도 될듯
-    }
+    while(current_node->student_info->name > info.name)
 }
 
 int count_list(char Filename[]) // 파일이 총 몇 줄인지 센다. open하지 않아도 실행이 가능한 코드이다. 
@@ -84,8 +74,6 @@ int count_list(char Filename[]) // 파일이 총 몇 줄인지 센다. open하�
 
 void load_list(FILE *fp , sinfo_node *node) // 파일로부터 받아들인 정보를 연결리스트에 저장하는 함수를 선언 (1회용) 
 {
-    int i = 0;
-
     fscanf(fp, "%s", node->student_info.name);
     fscanf(fp, "%s", node->student_info.gender);
     fscanf(fp, "%s", node->student_info.city);
@@ -93,8 +81,6 @@ void load_list(FILE *fp , sinfo_node *node) // 파일로부터 받아들인 정�
     fscanf(fp, "%s", node->student_info.gpa);
     fscanf(fp, "%s", node->student_info.height);
     fscanf(fp, "%s", node->student_info.weight); 
-    
-    printf("complete one line load");
 }
 
 void print_node(sinfo_node* node) // 연결 리스트에서 입력받은 한 노드의 구조체 정보를 출력하는 함수
@@ -111,6 +97,7 @@ void print_node(sinfo_node* node) // 연결 리스트에서 입력받은 한 노
 
 void search(sinfo_node **head, sinfo info)  // 원하는 정보가 연결리스트에 있는지 검색하는 함수
 {
+    // head노드는 이중포인터인데 나머지는 왜 단일포인터인지 잘 모르겠음...? 나머지는 왜 이중이 아닌지?
     sinfo_node* curr = *head;
     
     while(curr -> next != NULL) // 순차반복 (null이면 멈춤)
@@ -131,7 +118,7 @@ void delete(sinfo_node **head, sinfo info)
     while(curr -> next != NULL) // 순차반복 (null이면 멈춤)
     {
         // 1.적절한 위치 찾기
-        if(curr->next->student_info.name[0] > info.name[0])
+        if(curr->next->student_info.name[0] == info.name[0]) // 이거 왜 ==임?
             break;
         curr -> next = del_node -> next; // ??
     }
@@ -154,25 +141,42 @@ int main(void)
     {
         // 공백을 만날 떄마다 끊어서 tok(n)에 저장해줌.
         sscanf(input, "%s%s%s%s%s%s%s%s%s", tok1, tok2, tok3, tok4, tok5, tok6, tok7, tok8, tok9);  
+        sinfo_node *node;  //while반복문 내에서 첫 노드를 사용하기 위해 먼저 선언
         if (strcmp (tok1, "CREATE") == 0)      
         {
-            sinfo_node *node = create_node();
+            node = create_node(); // first 노드 정의
             printf("CREATE is done=======================\n");
         }
         
-        else if ( strcmp (tok1, "LOAD") == 0)  // 리스트 txt에서 학생 정보 입력 받아 이름순으로 연결리스트에 저장
+        else if ( strcmp (tok1, "LOAD") == 0)  // 리스트 txt에서 학생 정보 입력 받아 이름순으로 연결리스트에 저장(반복해야함)
         {
+            count_list("list.txt");
+            FILE *listfp = fopen("list.txt","r+t");
 
+            int k = 0;
+            for(k; k < list_line; k++)
+            {
+                load_list(listfp, node); 
+                listfp++;
+            }
             printf("LOAD is done=======================\n");
         }
 
         else if (strcmp (tok1, "PRINT") == 0) // 저장한 모든 학생 정보를 출력. 
         {
+            for(int t = 0; t < list_line; t++)
+                print_node(node);
             printf("PRINT is done=======================\n");
         }
 
         else if (strcmp (tok1, "INSERT") == 0 ) // 학생 정보 입력받아서 이름순에 맞는 위치에 삽입
         {
+            sinfo new_info = {tok2, tok3, tok4, tok5, tok6, tok7, tok8}; //input 파일에서 필요한 자료를 구조체 변수에 저장
+            sinfo_node **head; // 이거 위치 첫 노드로 맞춰야하는데....
+            
+            // append하려면 탐색을 수행할 노드와 구조체 정보가 필요함
+            append(head, new_info);
+
             printf("INSERT is done=======================\n");
 
         }
