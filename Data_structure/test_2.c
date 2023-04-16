@@ -114,6 +114,39 @@ void print_node() // 연결 리스트에서 입력받은 한 노드의 구조체
     }
 }
 
+void swap(char string1[], char string2[])
+{
+    char temp_string; 
+    strcpy(temp_string,string2);
+    strcpy(string2, string1);
+    strcpy(string1, temp_string);
+}
+
+void sort_list(void)
+{
+    sinfo_node * curr_node = head_node;             // for문에서 i 
+    sinfo_node * curr2_node = curr_node -> next;    // for문에서 j
+
+    while(curr_node->next != NULL)
+    {
+        while(curr2_node->next != NULL)
+        {
+            if(curr_node->student_info.name > curr2_node->student_info.name)
+            {
+                swap(curr_node->student_info.name,curr2_node->student_info.name);
+                swap(curr_node->student_info.gender,curr2_node->student_info.gender);
+                swap(curr_node->student_info.city,curr2_node->student_info.city);
+                swap(curr_node->student_info.dept,curr2_node->student_info.dept);
+                swap(curr_node->student_info.gpa,curr2_node->student_info.gpa);
+                swap(curr_node->student_info.height,curr2_node->student_info.height);
+                swap(curr_node->student_info.weight,curr2_node->student_info.weight);
+            }
+            curr2_node = curr2_node -> next; // for문에서 증가연산자
+        }
+        curr_node = curr_node -> next; 
+    }
+}
+
 void search(sinfo_node **head, sinfo info)  // 원하는 정보가 연결리스트에 있는지 검색하는 함수
 {
     // head노드는 이중포인터인데 나머지는 왜 단일포인터인지 잘 모르겠음...? 나머지는 왜 이중이 아닌지?
