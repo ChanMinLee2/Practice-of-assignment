@@ -147,39 +147,42 @@ void sort_list(void)
     }
 }
 
-void search(sinfo_node **head, sinfo info)  // 원하는 정보가 연결리스트에 있는지 검색하는 함수
+void search(char name[])  // 원하는 정보가 연결리스트에 있는지 검색하는 함수
 {
-    // head노드는 이중포인터인데 나머지는 왜 단일포인터인지 잘 모르겠음...? 나머지는 왜 이중이 아닌지?
-    sinfo_node* curr = *head;
-    
-    while(curr -> next != NULL) // 순차반복 (null이면 멈춤)
+    sinfo_node * curr_node = head_node;
+
+    while(curr_node->next != NULL)
+    {
+        if (strcmp(curr_node->student_info.name, name) == 0) // 있음
         {
-            if(curr -> student_info.name == info.name) // 연결리스트의 한 노드가 입력받은 정보와 같으면 그 노드의 구조체 배열 출력
-            {   
-                print_node(curr);
-            }
-            curr = curr -> next; 
+            printf("%s ", curr_node -> student_info.name);
+            printf("%s ", curr_node -> student_info.gender);
+            printf("%s ", curr_node -> student_info.city);  
+            printf("%s ", curr_node -> student_info.dept);  
+            printf("%s ", curr_node -> student_info.gpa);  
+            printf("%s ", curr_node -> student_info.height);  
+            printf("%s\n", curr_node -> student_info.weight);
         }
+        printf("찾으시는 정보는 없습니다. \n");
+    }
+
 }
 
-void delete(sinfo_node **head, sinfo info)
+void delete(char del_name[])
 {
-    sinfo_node* curr = *head;
-    sinfo_node* del_node;
+    sinfo_node * curr_node = head_node;
+    sinfo_node * del_node;
 
-    while(curr -> next != NULL) // 순차반복 (null이면 멈춤)
+    while(curr_node->next != NULL)
     {
-        // 1.적절한 위치 찾기
-        if(curr->next->student_info.name[0] == info.name[0]) // 이거 왜 ==임?
-            break;
-        curr -> next = del_node -> next; // ??
+        if (strcmp(curr_node->next->student_info.name,del_name) == 0)
+        {       
+            del_node = curr_node -> next;
+            curr_node -> next = del_node ->next;
+        }
+        
+        printf("삭제를 요청한 정보는 리스트에 없습니다. \n");
     }
-    // 2.링크 갱신
-    del_node = curr -> next;
-    curr -> next = del_node -> next;
-
-    // 3.할당 해제
-    free(del_node);
 }
 
 int main(void) 
