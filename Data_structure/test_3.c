@@ -25,6 +25,7 @@ struct sset
 
 
 
+
 int main(void) 
 {
     FILE *fp = fopen ( "input.txt", "r+t");     // 각 파일들 컨트롤 할 포인터들 선언 + 파일 열기. 
