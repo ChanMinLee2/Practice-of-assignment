@@ -168,8 +168,10 @@ int main()
     char line[256];  // 최대 문자열 길이
     int num_records = 0;
     sset my_sset;       // 집합 선언
+    sinfo temp;
     smap my_smap_Q3;
     smap my_smap_Q4;
+    int check_same = 0;
 
     // Open file for reading
     fp = fopen("list.txt", "r+t");
@@ -182,24 +184,18 @@ int main()
     // 파일 읽기
     while (fgets(line, sizeof(line), fp)) 
     {
-        sscanf(line, "%s%s%s%s%s%s%s", my_sset.svalues[num_records].name,
-        my_sset.svalues[num_records].gender, my_sset.svalues[num_records].city,
-        my_sset.svalues[num_records].dept, my_sset.svalues[num_records].gpa,
-        my_sset.svalues[num_records].height, my_sset.svalues[num_records].weight);
-        num_records++;
-        my_sset.count++;
-
-        // set에 구조체 정보를 삽입과 동시에 정렬하기.
-        int index = 0;   // while에서 쓸 루프제어변수
-        while(index < my_sset.count) 
+        sscanf(line, "%s%s%s%s%s%s%s", temp.name, temp.gender, temp.city, temp.dept, temp.gpa, temp.height, temp.weight);
+        for(int j = 0; j < my_sset.count; j++)
         {
-            if(strcmp(my_sset.svalues[index].name,my_sset.svalues[num_records].name) >= 0)
+            if(strcmp(temp.name, my_sset.svalues[j].name) == 0)
             {
-                for(int index2 = num_records - 1; index2 >= index; index2-- )
-                    my_sset.svalues[index2] = my_sset.svalues[index2 - 1];
-                strcpy(my_sset.svalues[index].name, my_sset.svalues[num_records].name);
-                break;
+                check_same = 1;
+                continue;
             }
+        }
+        if (check_same == 0)
+        {
+            my_sset.svalues[my_sset.count++] = temp;
         }
     }
 
@@ -229,5 +225,6 @@ int main()
     Q4(my_sset, my_smap_Q4);
     printf("============== process Q3 is good ===============");
     
-
+    // q5. 학생들의 이름을 id로 사용할 수 있는가? 
+    // x -> 동명이인이 있기 때문에 학생들의 이름을 id로 사용할 수는 없음.
 }
