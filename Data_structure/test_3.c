@@ -4,19 +4,19 @@
 
 #define MAX_NUM 100
 
-typedef struct sinfo sinfo;  // í•™ìƒì •ë³´ë¥¼ ì €ì¥í•˜ëŠ” êµ¬ì¡°ì²´
+typedef struct sinfo sinfo;  // ÇĞ»ıÁ¤º¸¸¦ ÀúÀåÇÏ´Â ±¸Á¶Ã¼
 struct sinfo
 {
-    char name[10];        // 4ì
+    char name[10];        // 4ÀÚ
     char gender[8];
-    char city[10];        // 4ì
-    char dept[20];        // 8ì
+    char city[10];        // 4ÀÚ
+    char dept[20];        // 8ÀÚ
     char gpa[10];
     char height[10];
     char weight[10];
 };
 
-// ë¨¼ì € êµ¬ì¡°ì²´ íƒ€ì… set ì„ ì–¸ ì—¬ê¸°ì— êµ¬ì¡°ì²´ ì •ë³´ ë‹¤ ë„£ì„ê±°ì„. 
+// ¸ÕÀú ±¸Á¶Ã¼ Å¸ÀÔ set ¼±¾ğ ¿©±â¿¡ ±¸Á¶Ã¼ Á¤º¸ ´Ù ³ÖÀ»°ÅÀÓ. 
 typedef struct sset sset;
 struct sset
 {
@@ -27,39 +27,42 @@ struct sset
 typedef struct smap smap;
 struct smap
 {
-    char keys[MAX_NUM][MAX_NUM]; // Q3ì—ì„œëŠ” dept Q4ì—ì„œëŠ” city
-    int values[MAX_NUM]; // Q3ì—ì„œëŠ” deptë§ˆë‹¤ì˜ í•™ìƒ ìˆ˜
+    char keys[MAX_NUM][MAX_NUM]; // Q3¿¡¼­´Â dept Q4¿¡¼­´Â city
+    int values[MAX_NUM]; // Q3¿¡¼­´Â dept¸¶´ÙÀÇ ÇĞ»ı ¼ö
     int count;
 };
 
 typedef struct smap_Q5 smap_Q5;
 struct smap_Q5
 {
-    char keys[MAX_NUM][MAX_NUM]; // Q3ì—ì„œëŠ” dept Q4ì—ì„œëŠ” city
-    sinfo svalues[MAX_NUM]; // Q3ì—ì„œëŠ” deptë§ˆë‹¤ì˜ í•™ìƒ ìˆ˜
+    char keys[MAX_NUM][MAX_NUM];
+    sinfo svalues[MAX_NUM]; 
     int count;
 };
 
-// ê·¸ë¦¬ê³  3,4ë²ˆ ì ‘ê·¼í•  êµ¬ì¡°ì²´ íƒ€ì… mapì„ ì–¸. ì´ê±¸ë¡œëŠ” í‚¤ : ê°’ êµ¬ì¡°ë¡œ ì‚¬ìš© 
+// ±×¸®°í 3,4¹ø Á¢±ÙÇÒ ±¸Á¶Ã¼ Å¸ÀÔ map¼±¾ğ. ÀÌ°É·Î´Â Å° : °ª ±¸Á¶·Î »ç¿ë 
 
-// ì•„ë§ˆ í‚¤ì—ëŠ” í•™ê³¼ ê°’ì—ëŠ” ì§‘í•© ë˜ëŠ” í•™ê³¼ì˜ í•™ìƒ ìˆ˜ ì´ë ‡ê²Œ ë„£ì„ë“¯?
+// ¾Æ¸¶ Å°¿¡´Â ÇĞ°ú °ª¿¡´Â ÁıÇÕ ¶Ç´Â ÇĞ°úÀÇ ÇĞ»ı ¼ö ÀÌ·¸°Ô ³ÖÀ»µí?
+
+void set_print(struct sset *mySet) {
+    for (int i = 0; i < mySet -> count; i++) {
+        printf("%s ", mySet -> svalues[i].name);
+        printf("%s ", mySet -> svalues[i].gender);
+        printf("%s ", mySet -> svalues[i].city);  
+        printf("%s ", mySet -> svalues[i].dept);  
+        printf("%s ", mySet -> svalues[i].gpa);  
+        printf("%s ", mySet -> svalues[i].height);  
+        printf("%s\n", mySet -> svalues[i].weight);
+    }
+}
 
 void Q1(sset sset)
 {
-    sinfo moon;
     for(int i = 0; i < sset.count; i++)
     {
-        if(strcmp(sset.svalues[i].name, "ê¹€ë¬¸í¬") == 0)
+        if(strcmp(sset.svalues[i].name, "±è¹®Èñ") == 0) // ¿Ö ºñ±³°¡ Á¦´ë·Î ¾ÈµÇ´Â°ÅÁö?
         {
-            moon = sset.svalues[i];
-        }
-    }
-
-    for(int i = 0; i < sset.count; i++)
-    {
-        if(strcmp(sset.svalues[i].name, moon.name) == 0)
-        {
-            printf("ê¹€ë¬¸í¬ê°€ ì‚¬ëŠ” ê³³ì€ %sì…ë‹ˆë‹¤. \n", sset.svalues[i].city);
+            printf("±è¹®Èñ°¡ »ç´Â °÷Àº %sÀÔ´Ï´Ù. \n", sset.svalues[i].city);
         }
     }
 }
@@ -69,7 +72,7 @@ void Q2(sset sset)
     sinfo chun;
     for(int i = 0; i < sset.count; i++)
     {
-        if(strcmp(sset.svalues[i].name, "ì²œí•˜ì€") == 0)
+        if(strcmp(sset.svalues[i].name, "ÃµÇÏÀº") == 0)
         {
             chun = sset.svalues[i];
         }
@@ -78,45 +81,62 @@ void Q2(sset sset)
     int count_Q2 = 0;
     for(int i = 0; i < sset.count; i++)
     {
-        if((atoi(sset.svalues[i].gpa)) > (atoi(chun.gpa)))
+        if((atof(sset.svalues[i].gpa)) > atof(chun.gpa)) // À§ for¹®¿¡¼­ Á¦´ë·Î ¹ŞÁö ¸øÇÔ. 
         {
             count_Q2++;
         }
     }
-    printf("ì²œí•˜ì€ë³´ë‹¤ ì„±ì ì´ ë†’ì€ì‚¬ëŒ ìˆ˜ : %d \n", count_Q2);
+    printf("ÃµÇÏÀºº¸´Ù ¼ºÀûÀÌ ³ôÀº»ç¶÷ ¼ö : %d \n", count_Q2);
 }
 
-void Q3(sset sset, smap smap)
+void Q3(sset sset)
 {
     int max = 0;
-    for(int i = 0; i < sset.count; i++)
+    smap smap;
+    smap.count = 0;
+    int process = 0;
+    while (process < sset.count )
     {
-        for(int j = 0; j < smap.count; j++)
+        if (smap.count == 0)
         {
-            if(smap.count == 8)
-            {
-                if(strcmp(smap.keys[j], sset.svalues[i].dept) == 0)
-                {
-                    smap.values[j]++;
-                    continue;
-                }
-            }
-
-            else 
-            {
-                if(strcmp(smap.keys[j], sset.svalues[i].dept) == 0)
-                {
-                    smap.values[j]++;
-                    continue;
-                }
-                else
-                {
-                    strcpy(smap.keys[smap.count], sset.svalues[i].dept);
-                    (smap.values[(smap.count)++])++;
-                }
-            }
+            strcpy(smap.keys[smap.count], sset.svalues[0].dept);
+            smap.values[smap.count] = 0;
+            (smap.values[smap.count])++;
+            (smap.count)++;
+            process++;
+            printf("first %s %d %d %d\n\n", smap.keys[0] , smap.count, process, sset.count);
         }
+        
+        else
+        {
+            for (int i = 0; i < sset.count; i++)
+            {
+                for (int j = 0; j < smap.count; j++)
+                {
+                    if (strcmp(smap.keys[j], sset.svalues[i].dept) == 0)
+                    {
+                        (smap.values[j])++;
+                        
+                        printf("middle %s %d %d %d\n\n",smap.keys[smap.count-1] ,smap.count, process, sset.count);
+                    }
+
+                    else if (j == smap.count-1 )
+                    {
+                        strcpy(smap.keys[smap.count], sset.svalues[smap.count].dept);
+                        smap.values[smap.count] = 0;
+                        (smap.values[smap.count])++;
+                        (smap.count)++;
+                        
+                        printf("firsts %d %d %d\n\n", smap.count ,process, sset.count);
+                    }
+                }
+                process++;
+            }
+            
+        }
+        
     }
+    printf("good input\n ");
 
     for (int i = 0; i < smap.count; i++)
     {
@@ -127,6 +147,11 @@ void Q3(sset sset, smap smap)
     }
 
     printf("%d \n", max);
+    int sum = 0;
+    for (int i = 0; i < smap.count; i++) {
+        sum += smap.values[i];
+    }
+    printf("%d\n", sum);
 }
 
 void Q4(sset sset, smap smap)
@@ -161,8 +186,7 @@ void Q4(sset sset, smap smap)
         }
     }
 
-    // ì§€ì—­ í¬ê¸° ìˆœìœ¼ë¡œ ì¶œë ¥í•˜ê¸°. 
-    // ì½”ë“œ
+    // Áö¿ª ¼ö ¼øÀ¸·Î Ãâ·ÂÇÏ´Â ÄÚµå (for)
 }
 void Q5(sset sset, smap_Q5 smap_Q5, char* name)
 {
@@ -185,19 +209,19 @@ void Q5(sset sset, smap_Q5 smap_Q5, char* name)
     }
     if(check_same == 1)
     {
-        printf("%s, %s, %s, %s, %s, %s, %s \n", smap_Q5.svalues[search_index].name,smap_Q5.svalues[search_index].name,
+        printf("%s, %s, %s, %s, %s, %s, %s \n", smap_Q5.svalues[search_index].name,
             smap_Q5.svalues[search_index].gender, smap_Q5.svalues[search_index].city,
             smap_Q5.svalues[search_index].dept, smap_Q5.svalues[search_index].gpa,
             smap_Q5.svalues[search_index].height, smap_Q5.svalues[search_index].weight);
     }
     else if (check_same == 2)
     {
-        printf("ì´ í‚¤ëŠ” ì¤‘ë³µì…ë‹ˆë‹¤.");
+        printf("ÀÌ Å°´Â Áßº¹ÀÔ´Ï´Ù.");
     }
 
     else
     {
-        printf("ì…ë ¥í•˜ì‹  í‚¤ëŠ” mapì— ì—†ìŠµë‹ˆë‹¤.");
+        printf("ÀÔ·ÂÇÏ½Å Å°´Â map¿¡ ¾ø½À´Ï´Ù.");
     }
     
 }
@@ -205,9 +229,9 @@ void Q5(sset sset, smap_Q5 smap_Q5, char* name)
 int main() 
 {
     FILE *fp;
-    char line[256];  // ìµœëŒ€ ë¬¸ìì—´ ê¸¸ì´
+    char line[256];  // ÃÖ´ë ¹®ÀÚ¿­ ±æÀÌ
     int num_records = 0;
-    sset my_sset;       // ì§‘í•© ì„ ì–¸
+    sset my_sset;       // ÁıÇÕ ¼±¾ğ
     sinfo temp;
     smap my_smap_Q3;
     smap my_smap_Q4;
@@ -218,73 +242,81 @@ int main()
     fp = fopen("list.txt", "r+t");
     if (fp == NULL) 
     {
-        printf("íŒŒì¼ì„ ì—´ ìˆ˜ ì—†ìŠµë‹ˆë‹¤. \n");
+        printf("ÆÄÀÏÀ» ¿­ ¼ö ¾ø½À´Ï´Ù. \n");
         return 0;
     }
 
-    // íŒŒì¼ ì½ê¸°
-    while (fgets(line, sizeof(line), fp)) 
+    // ÆÄÀÏ ÀĞ±â
+    while (fgets(line, sizeof(line), fp))
     {
+        check_same = 0; 
         sscanf(line, "%s%s%s%s%s%s%s", temp.name, temp.gender, temp.city, temp.dept, temp.gpa, temp.height, temp.weight);
-        //printf("%s %s\n",temp.name, temp.weight);
         if (my_sset.count == 0)
         {
-            my_sset.svalues[0] = temp; // ì¶”ê°€í•  ìœ„ì¹˜ì— ì¶”ê°€
+            my_sset.svalues[0] = temp; // Ãß°¡ÇÒ À§Ä¡¿¡ Ãß°¡
+            my_sset.count++; 
+            continue;
         }
-        
         for(int j = 0; j <= my_sset.count; j++)
         {
             if(strcmp(temp.name, my_sset.svalues[j].name) == 0)
             {
                 check_same = 1;
-                continue;
             }
         }
-        if (check_same == 0) // ì¤‘ë³µ ì•„ë‹Œ ê²½ìš° -- ë°”ë¡œ ì¶”ê°€(ì‚½ì…)
+        if (check_same == 0) // Áßº¹ ¾Æ´Ñ °æ¿ì -- ¹Ù·Î Ãß°¡(»ğÀÔ)
         {
-            int index = 0;   // whileì—ì„œ ì“¸ ë£¨í”„ì œì–´ë³€ìˆ˜, ì¶”ê°€í•  ìœ„ì¹˜ë¥¼ ê°€ë¦¬í‚´
-            while(index < my_sset.count) 
+            int index = 0;   // while¿¡¼­ ¾µ ·çÇÁÁ¦¾îº¯¼ö, Ãß°¡ÇÒ À§Ä¡¸¦ °¡¸®Å´
+            while(index <= my_sset.count) 
             {
-                if(strcmp(my_sset.svalues[index].name,temp.name) >= 0)
+                if (index == my_sset.count-1)
                 {
-                    for(int index2 = my_sset.count - 1; index2 > index; index2-- )  // ë’¤ë¡œ ë°€ê¸°
-                        my_sset.svalues[index2] = my_sset.svalues[index2 - 1];
-                    my_sset.svalues[index] = temp; // ì¶”ê°€í•  ìœ„ì¹˜ì— ì¶”ê°€
-                    printf("%s %s\n", my_sset.svalues[index].name,  my_sset.svalues[index].weight);
+                    if ((index + 1) < MAX_NUM )
+                    {
+                        my_sset.svalues[index+1] = temp;
+                    }
+
+                    else
+                    {
+                        printf("Á¤º¸¸¦ ´õ ÀÌ»ó Ãß°¡ÇÒ ¼ö ¾ø½À´Ï´Ù.");
+                    }
+                    
+                }
+                
+                if(strcmp(my_sset.svalues[index].name,temp.name) >= 0 ) // 0¹ø¤Š index¿¡ Ãß°¡µÉ ¶§
+                {
+                    for(int index2 = my_sset.count; index2 >= index; index2-- )  //  ¸Ç ³¡¿¡ Ãß°¡µÉ¶§¸¦ »ı°¢ÇØ¼­ ¿©±â ¸»°í ¹Ø¿¡¸¦ °íÄ§
+                        my_sset.svalues[index2 + 1] = my_sset.svalues[index2];   // µÚ·Î ¹Ğ±â
+                    my_sset.svalues[index] = temp; // Ãß°¡ÇÒ À§Ä¡¿¡ Ãß°¡ 
+                    my_sset.count++; // Áõ°¡ ¿¬»êÀÚ
                     break;
                 }
+                index++; // Áõ°¡ ¿¬»êÀÚ
             }
         }
     }
+    
+    // q1. ±è¹®Èñ°¡ »ç´Â°÷
 
-    // for (int i = 0; i < my_sset.count; i++)
-    // {
-    //     printf("%s, %s, %s, %s, %s, %s, %s \n", my_sset.svalues[i].name,my_sset.svalues[i].name,
-    //     my_sset.svalues[i].gender, my_sset.svalues[i].city,
-    //     my_sset.svalues[i].dept, my_sset.svalues[i].gpa,
-    //     my_sset.svalues[i].height, my_sset.svalues[i].weight);
-    // }
-    
-    // q1. ê¹€ë¬¸í¬ê°€ ì‚¬ëŠ”ê³³
-    
+    set_print(&my_sset);
     Q1(my_sset);
     printf("============== process Q1 is good ===============\n");
 
-    // q2. ì²œí•˜ì€ë³´ë‹¤ ì„±ì ì´ ë†’ì€ì‚¬ëŒì€ ëª‡ ëª…ì¸ì§€
+    // q2. ÃµÇÏÀºº¸´Ù ¼ºÀûÀÌ ³ôÀº»ç¶÷Àº ¸î ¸íÀÎÁö
     
     Q2(my_sset);
     printf("============== process Q2 is good ===============\n");
 
-    // q3. ê°€ì¥ í•™ìƒì´ ë§ì€í•™ê³¼ëŠ”?
-    Q3(my_sset, my_smap_Q3);
+    // q3. °¡Àå ÇĞ»ıÀÌ ¸¹ÀºÇĞ°ú´Â?
+    Q3(my_sset);
     printf("============== process Q3 is good ===============\n");
 
-    // q4. ê°€ì¥ ë§ì€ í•™ìƒì´ ê±°ì£¼í•˜ëŠ” ì§€ì—­ ìˆœì„œëŒ€ë¡œ ì§€ì—­ì„ ì¶œë ¥í•˜ë¼.
+    // q4. °¡Àå ¸¹Àº ÇĞ»ıÀÌ °ÅÁÖÇÏ´Â Áö¿ª ¼ø¼­´ë·Î Áö¿ªÀ» Ãâ·ÂÇÏ¶ó.
     Q4(my_sset, my_smap_Q4);
     printf("============== process Q4 is good ===============\n");
     
-    // q5. í•™ìƒë“¤ì˜ ì´ë¦„ì„ idë¡œ ì‚¬ìš©í•  ìˆ˜ ìˆëŠ”ê°€? 
-    // x -> ë™ëª…ì´ì¸ì´ ìˆê¸° ë•Œë¬¸ì— í•™ìƒë“¤ì˜ ì´ë¦„ì„ idë¡œ ì‚¬ìš©í•  ìˆ˜ëŠ” ì—†ìŒ.
-    Q5(my_sset, smap_Q5, "ì˜¤ì˜");
+    // q5. ÇĞ»ıµéÀÇ ÀÌ¸§À» id·Î »ç¿ëÇÒ ¼ö ÀÖ´Â°¡? 
+    // x -> µ¿¸íÀÌÀÎÀÌ ÀÖ±â ¶§¹®¿¡ ÇĞ»ıµéÀÇ ÀÌ¸§À» id·Î »ç¿ëÇÒ ¼ö´Â ¾øÀ½.
+    Q5(my_sset, smap_Q5, "¿À¿µ");
     printf("============== process Q5 is good ===============\n");
 }
