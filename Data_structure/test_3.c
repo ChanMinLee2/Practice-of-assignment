@@ -98,6 +98,7 @@ void Q3(sset sset)
     for (int i = 0; i < MAX_NUM; i++)
     {
         smap.values[i] = 0;
+        //printf("%d\n", smap.values[i]);
     }
     smap.count = 0;
 
@@ -120,41 +121,52 @@ void Q3(sset sset)
         else // 첫 추가 이후 (process > 0 일 때)
         {
             // smap의 원소를 제어할 for loop
-            for (int i = 1; i <= smap.count; i++) 
+            for (int i = 0; i <= smap.count; i++) 
             {
+                // printf("%s \n", smap.values[process].name);
+                
                 // process index의 dept가 map의 모든 키와 비교해도 없을 때. >> map 키에 추가해야 함
                 if ( i == smap.count && strcmp(smap.keys[i-1], sset.svalues[process].dept) != 0 )
                 {
                     strcpy(smap.keys[smap.count], sset.svalues[process].dept);  // 키 추가
                     (smap.values[smap.count])++;                                // 새로운 키의 값 ++
-                    smap.count++;                                               // 키 추가됐음을 count로 셈
+                    smap.count++;  // 키 추가됐음을 count로 셈
+                    //printf("%s\n", smap.keys[smap.count]);
+                    //printf("good insert new key\n");
+                    break;
                 }
                 // process index의 dept가 map의 한 키와 똑같을 때 >> map 해당하는 키의 값을 ++해야함
-                else if ( strcmp(smap.keys[i], sset.svalues[process].dept) == 0 )
+                else if ( strcmp(smap.keys[i], sset.svalues[process].dept) == 0 ) // 이게 왜 안걸리지? 김문희
                 {
                     (smap.values[i])++;
+                    //printf("good increse value\n");
+                    break;
                 }
                 // 위 두가지 경우가 아님 = 겹치는 키도 없지만, 아직 map의 키를 다 확인하지는 못 함.
             }
+
             process++; // while loop를 컨트롤하는 process를 1 증가시킴. (loop 1회)
         }
     }
-    printf("good input\n ");
 
+    // for (int i = 0; i < smap.count; i++)
+    // {
+    //     printf("%d\n", smap.values[i]);
+    // }
+    
+    max = smap.values[0]; // smap의 첫 값부터 비교시작.
+    
     for (int i = 0; i < smap.count; i++)
     {
-        if (smap.values[i] < smap.values[i+1])
+        if (smap.values[i+1] > smap.values[i])
         {
             max = smap.values[i+1];
         }
+        
     }
 
     printf("%d \n", max);
-    int sum = 0;
-    for (int i = 0; i < smap.count; i++) {
-        sum += smap.values[i];
-    }
-    printf("%d\n", sum);
+    
 }
 
 void Q4(sset sset, smap smap)
