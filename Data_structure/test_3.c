@@ -115,7 +115,7 @@ void Q3(sset sset)
             (smap.values[smap.count])++;
             (smap.count)++;
             process++;
-            printf("first %s %d %d %d\n\n", smap.keys[0] , smap.count, process, sset.count);
+            //printf("first %s %d %d %d\n\n", smap.keys[0] , smap.count, process, sset.count);
         }
         
         else // 첫 추가 이후 (process > 0 일 때)
@@ -165,7 +165,7 @@ void Q3(sset sset)
         
     }
 
-    printf("%d \n", max);
+    printf("학생 수가 가장 많은 학과의 학생 수 : %d \n", max);
     
 }
 
