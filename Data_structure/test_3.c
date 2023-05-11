@@ -95,11 +95,6 @@ void Q3(sset sset)
     smap smap; // Q3에서 쓸 맵 선언
 
     // smap 초기화
-    for (int i = 0; i < MAX_NUM; i++)
-    {
-        smap.values[i] = 0;
-        //printf("%d\n", smap.values[i]);
-    }
     smap.count = 0;
 
     // while 증가연산자
@@ -108,78 +103,47 @@ void Q3(sset sset)
     // set의 원소들을 순차적으로 읽는 while loop 
     while (process < sset.count )
     {
-        if (process == 0) // 첫 추가
-        {
-            strcpy(smap.keys[process], sset.svalues[process].dept);
-            smap.values[smap.count] = 0;
-            (smap.values[smap.count])++;
-            (smap.count)++;
-            process++;
-            //printf("first %s %d %d %d\n\n", smap.keys[0] , smap.count, process, sset.count);
-        }
-        
-        else // 첫 추가 이후 (process > 0 일 때)
-        {
             // smap의 원소를 제어할 for loop
-            for (int i = 0; i <= smap.count; i++) 
+        for (int i = 0; i <= smap.count; i++) 
+        {            
+            // process index의 dept가 map의 모든 키와 비교해도 없을 때. >> map 키에 추가해야 함
+            if ( strcmp(smap.keys[i], sset.svalues[process].dept) == 0 ) // 이게 왜 안걸리지? 김문희
             {
-                // printf("%s \n", smap.values[process].name);
-                
-                // process index의 dept가 map의 모든 키와 비교해도 없을 때. >> map 키에 추가해야 함
-                if ( i == smap.count && strcmp(smap.keys[i-1], sset.svalues[process].dept) != 0 )
-                {
-                    strcpy(smap.keys[smap.count], sset.svalues[process].dept);  // 키 추가
-                    (smap.values[smap.count])++;                                // 새로운 키의 값 ++
-                    smap.count++;  // 키 추가됐음을 count로 셈
-                    //printf("%s\n", smap.keys[smap.count]);
-                    //printf("good insert new key\n");
-                    break;
-                }
-                // process index의 dept가 map의 한 키와 똑같을 때 >> map 해당하는 키의 값을 ++해야함
-                else if ( strcmp(smap.keys[i], sset.svalues[process].dept) == 0 ) // 이게 왜 안걸리지? 김문희
-                {
-                    (smap.values[i])++;
-                    //printf("good increse value\n");
-                    break;
-                }
-                // 위 두가지 경우가 아님 = 겹치는 키도 없지만, 아직 map의 키를 다 확인하지는 못 함.
+                (smap.values[i])++;
+                break;
             }
-
-            process++; // while loop를 컨트롤하는 process를 1 증가시킴. (loop 1회)
+            // process index의 dept가 map의 한 키와 똑같을 때 >> map 해당하는 키의 값을 ++해야함
+            else if ( i == smap.count ) // It contains strcmp(smap.keys[i-1], sset.svalues[process].dept) != 0 because of else
+            {
+                strcpy(smap.keys[smap.count], sset.svalues[process].dept);  // 키 추가
+                (smap.values[smap.count]) = 1;                                // 새로운 키의 값 ++
+                smap.count++;  // 키 추가됐음을 count로 셈
+                break;
+            }
+            // 위 두가지 경우가 아님 = 겹치는 키도 없지만, 아직 map의 키를 다 확인하지는 못 함.
         }
+        process++; // while loop를 컨트롤하는 process를 1 증가시킴. (loop 1회)
     }
-
-    // for (int i = 0; i < smap.count; i++)
-    // {
-    //     printf("%d\n", smap.values[i]);
-    // }
-    
-    max = smap.values[0]; // smap의 첫 값부터 비교시작.
     
     for (int i = 0; i < smap.count; i++)
     {
-        if (smap.values[i+1] > smap.values[i])
+        if (smap.values[max] < smap.values[i])
         {
             max = smap.values[i+1];
         }
         
     }
 
-    printf("학생 수가 가장 많은 학과의 학생 수 : %d \n", max);
+    printf("학생 수가 가장 많은 학과의 학생 수 : %s \n", smap.keys[max]);
     
 }
 
-void Q4(sset sset, smap smap)
+void Q4(sset sset)
 {
     int max = 0; // Q3에서 쓸 최댓값 선언 및 초기화
     smap smap; // Q3에서 쓸 맵 선언
 
     // smap 초기화
-    for (int i = 0; i < MAX_NUM; i++)
-    {
-        smap.values[i] = 0;
-        //printf("%d\n", smap.values[i]);
-    }
     smap.count = 0;
 
     // while 증가연산자
@@ -188,62 +152,29 @@ void Q4(sset sset, smap smap)
     // set의 원소들을 순차적으로 읽는 while loop 
     while (process < sset.count )
     {
-        if (process == 0) // 첫 추가
-        {
-            strcpy(smap.keys[process], sset.svalues[process].dept);
-            smap.values[smap.count] = 0;
-            (smap.values[smap.count])++;
-            (smap.count)++;
-            process++;
-            //printf("first %s %d %d %d\n\n", smap.keys[0] , smap.count, process, sset.count);
-        }
-        
-        else // 첫 추가 이후 (process > 0 일 때)
-        {
             // smap의 원소를 제어할 for loop
-            for (int i = 0; i <= smap.count; i++) 
+        for (int i = 0; i <= smap.count; i++) 
+        {            
+            // process index의 dept가 map의 모든 키와 비교해도 없을 때. >> map 키에 추가해야 함
+            if ( strcmp(smap.keys[i], sset.svalues[process].city) == 0 ) // 이게 왜 안걸리지? 김문희
             {
-                // printf("%s \n", smap.values[process].name);
-                
-                // process index의 dept가 map의 모든 키와 비교해도 없을 때. >> map 키에 추가해야 함
-                if ( i == smap.count && strcmp(smap.keys[i-1], sset.svalues[process].dept) != 0 )
-                {
-                    strcpy(smap.keys[smap.count], sset.svalues[process].dept);  // 키 추가
-                    (smap.values[smap.count])++;                                // 새로운 키의 값 ++
-                    smap.count++;  // 키 추가됐음을 count로 셈
-                    //printf("%s\n", smap.keys[smap.count]);
-                    //printf("good insert new key\n");
-                    break;
-                }
-                // process index의 dept가 map의 한 키와 똑같을 때 >> map 해당하는 키의 값을 ++해야함
-                else if ( strcmp(smap.keys[i], sset.svalues[process].dept) == 0 ) // 이게 왜 안걸리지? 김문희
-                {
-                    (smap.values[i])++;
-                    //printf("good increse value\n");
-                    break;
-                }
-                // 위 두가지 경우가 아님 = 겹치는 키도 없지만, 아직 map의 키를 다 확인하지는 못 함.
+                (smap.values[i])++;
+                break;
             }
-
-            process++; // while loop를 컨트롤하는 process를 1 증가시킴. (loop 1회)
+            // process index의 dept가 map의 한 키와 똑같을 때 >> map 해당하는 키의 값을 ++해야함
+            else if ( i == smap.count )
+            {
+                strcpy(smap.keys[smap.count], sset.svalues[process].city);  // 키 추가
+                (smap.values[smap.count]) = 1;                                // 새로운 키의 값 ++
+                smap.count++;  // 키 추가됐음을 count로 셈
+                break;
+            }
+            // 위 두가지 경우가 아님 = 겹치는 키도 없지만, 아직 map의 키를 다 확인하지는 못 함.
         }
+        process++; // while loop를 컨트롤하는 process를 1 증가시킴. (loop 1회)
     }
-
-    // for (int i = 0; i < smap.count; i++)
-    // {
-    //     printf("%d\n", smap.values[i]);
-    // }
     
-    max = smap.values[0]; // smap의 첫 값부터 비교시작.
-    
-    for (int i = 0; i < smap.count; i++)
-    {
-        if (smap.values[i+1] > smap.values[i])
-        {
-            max = smap.values[i+1];
-        }
-        
-    }
+    // TODO: Print in order of many city.
 }
 void Q5(sset sset, smap_Q5 smap_Q5, char* name)
 {
@@ -290,8 +221,6 @@ int main()
     int num_records = 0;
     sset my_sset;       // 집합 선언
     sinfo temp;
-    smap my_smap_Q3;
-    smap my_smap_Q4;
     int check_same = 0;
     smap_Q5 smap_Q5;
 
@@ -369,7 +298,7 @@ int main()
     printf("============== process Q3 is good ===============\n");
 
     // q4. 가장 많은 학생이 거주하는 지역 순서대로 지역을 출력하라.
-    Q4(my_sset, my_smap_Q4);
+    Q4(my_sset);
     printf("============== process Q4 is good ===============\n");
     
     // q5. 학생들의 이름을 id로 사용할 수 있는가? 
