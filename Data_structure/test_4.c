@@ -101,14 +101,20 @@ int width(node *root, int (*height)(node *root))
 
 int search(node* root, int sval)
 {
-    if (root->value == sval)
+    if (root -> value == sval)
     {
         return 1;
     }
     
-    else if (root -> lchild != NULL)
+    if (root->lchild != NULL && root->rchild == NULL)
     {
-        
+        search(root->lchild, sval);
+    }
+    
+    else if (root->lchild != NULL && root->rchild != NULL)
+    {
+        search(root->lchild, sval);
+        search(root->rchild, sval);
     }
     
 }
