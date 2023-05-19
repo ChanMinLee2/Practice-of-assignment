@@ -16,7 +16,7 @@ void init(node *root)
     root->rchild = NULL;
 }
 
-void insert(node *root,int cval, int lval, int rval)
+void insert(node *root, int cval, int lval, int rval)
 {
     if (root->value == -1)
     {
@@ -36,7 +36,8 @@ void insert(node *root,int cval, int lval, int rval)
     // 1 위치 찾기
     if (root->value != cval)
     {
-        
+        insert(root->lchild,cval,lval,rval);
+        insert(root->rchild,cval,lval,rval);
     }
     
     node* lchild_node = (node*)malloc(sizeof(node));
@@ -86,9 +87,20 @@ void inorder_print(node* root)
     }
 }
 
-int height(node *root, int (*is_leaf_node) )
+int height(node *root )
 {
+    if (root == NULL)
+    {
+        printf("현재 트리는 비어있습니다.");
+    }
     
+    int r = 0, l = 0;
+    if (root->rchild != NULL)
+        r = Height(root->rchild);  
+    if (root->lchild != NULL)
+        l = Height(root->lchild);   
+
+    return 1 + max(r, l);
 }
 
 int width(node *root, int (*height)(node *root))
