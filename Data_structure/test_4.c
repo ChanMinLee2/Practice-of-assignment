@@ -21,6 +21,66 @@ int intmax(int a, int b)
     return (a > b) ? a : b;
 }
 
+int search(node* root, int sval)
+{
+    if (root -> value == -1)
+    {
+        printf("tree is empty\n");
+        return 0;
+    }
+    
+    if (root -> value == sval)
+    {
+        return 1;
+    }
+    
+    if (root->lchild != NULL && root->rchild != NULL)
+    {
+        int s1 = search(root->lchild, sval);
+        int s2 = search(root->rchild, sval);
+        return (s1>s2) ? s1 : s2;
+    }
+
+    else if (root->lchild == NULL && root->rchild == NULL)
+    {
+        return 0;
+    }
+    
+}
+
+node * insert_search(node* root, int x)
+{
+    if (root -> value == -1)
+    {
+        printf("tree is empty\n");
+        return NULL;
+    }
+
+    if (root -> value == x )
+    {
+        return root;
+    }
+    
+    if (root->lchild != NULL && root->rchild != NULL)
+    {
+        node *s1 = insert_search(root->lchild, x);
+        node *s2 = insert_search(root->rchild, x);
+        if (s1 != NULL)
+        {
+            return s1;
+        }
+        else if (s2 != NULL)
+        {
+            return s2;
+        }
+    }
+
+    else if (root->lchild == NULL && root->rchild == NULL)
+    {
+        return NULL;
+    }
+}
+
 void insert(node *root, int cval, int lval, int rval)
 {
     if (root->value == -1)
@@ -39,13 +99,8 @@ void insert(node *root, int cval, int lval, int rval)
         return;
     }
     // 1 위치 찾기
-    if (root->value != cval)
-    {
-        insert(root->lchild,cval,lval,rval);
-        insert(root->rchild,cval,lval,rval);
-    }
-    
-    else
+    node *fp = insert_search(root, cval);
+    if (fp != NULL)
     {
         node* lchild_node = (node*)malloc(sizeof(node));
         node* rchild_node = (node*)malloc(sizeof(node));
@@ -60,28 +115,49 @@ void insert(node *root, int cval, int lval, int rval)
         return;
     }
     
+    else
+    {
+        printf("invalid access!\n");
+        return;
+    }
+    
+}
+
+int is_leaf_node(node *root, int x)
+{
+    node * fp = insert_search(root,x);
+    if (fp != NULL && fp -> lchild == NULL && fp -> rchild == NULL)
+    {
+        return 1;
+    }
+
+    else if (fp == NULL || fp -> lchild != NULL || fp -> rchild != NULL)
+    {
+        return 0;
+    }
 }
 
 int valid(node *root, int cval, int lval, int rval)
 {
-    if (root->value == cval && root -> lchild == NULL)
+    if(root->value == -1)
+        return 1;
+
+    if(search(root, cval) == 0)
     {
-        return 1; // valid by rule 2
+        printf("%d\n\n", search(root,cval));
+        // invalid by rule 2.
+        return 0;
     }
 
-    else if (root->lchild->value == lval || root->rchild->value == rval)
+    if(search(root, lval) == 1 || search(root, rval) == 1)
     {
-        return 0; // not valid by rule 3
+        return 0;
     }
-
-    // 이 트리에서 모든 노드는 child를 가진다면 항상 두 개를 가진다. -> 단일 차일드 x
-    if (root->lchild != NULL && root->rchild != NULL)
+    
+    if (is_leaf_node(root, cval) == 1)
     {
-        int v1 = valid(root->lchild, cval, lval, rval);
-        int v2 = valid(root->rchild, cval, lval, rval);
-
-        return (v1>v2) ? v1 : v2;
-    }
+        return 1;
+    }    
 }
 
 void inorder_print(node* root)
@@ -110,7 +186,7 @@ int height(node *root )
     return 1 + intmax(r, l); // root의 깊이는 1, 그 이후로 세기.
 }
 
-int width(node *root, int (*height)(node *root))
+int width(node *root)
 {
     int max_height_left = height(root->lchild);
     int max_height_right = height(root->rchild);
@@ -118,45 +194,7 @@ int width(node *root, int (*height)(node *root))
     return (max_height_left - 1) + (max_height_right - 1);
 }
 
-int search(node* root, int sval)
-{
-    if (root -> value == sval)
-    {
-        return 1;
-    }
-    
-    if (root->lchild != NULL && root->rchild != NULL)
-    {
-        int s1 = search(root->lchild, sval);
-        int s2 = search(root->rchild, sval);
-        return (s1>s2) ? s1 : s2;
-    }
 
-    else if (root->lchild == NULL && root->rchild == NULL)
-    {
-        return 0;
-    }
-    
-}
-
-int is_leaf_node(node *root, int x)
-{
-
-    if (root != NULL)
-    {
-        if (root->value == x && root->lchild == NULL)
-        {
-            return 1;
-        }
-        
-        else if (root->lchild != NULL && root->rchild != NULL)
-        {
-            is_leaf_node(root->lchild, x);
-            is_leaf_node(root->rchild, x);
-        }
-    }
-    
-}
 
 int main(void)
 {
@@ -167,6 +205,7 @@ int main(void)
     FILE *fp = fopen("tree.txt", "r+t");
     printf("good open\n");
     node *root = (node*)malloc(sizeof(node));
+    init(root);
     printf("good node alloc\n");
 
     while(fgets(str, 128, fp) != NULL)
@@ -174,7 +213,7 @@ int main(void)
         printf("good loop start\n");
         sscanf(str, "%d %d %d", &cval, &lval, &rval);
         printf("good sscanf : %d %d %d\n", cval, lval, rval);
-        if(!valid(root, cval, lval, rval))
+        if(valid(root, cval, lval, rval) == 0)
         {
             printf("Invalid: %d %d %d\n", cval, lval, rval);
             printf("good valid check\n");
@@ -189,7 +228,7 @@ int main(void)
     printf("\n");
 
     printf("Height : %d\n", height(root));
-    printf("width  : %d\n", width(root,height));
+    printf("width  : %d\n", width(root));
 
     system("Pause");
     return 0;
