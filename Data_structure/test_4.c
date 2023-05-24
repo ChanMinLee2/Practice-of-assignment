@@ -23,6 +23,8 @@ int intmax(int a, int b)
 
 int search(node* root, int sval)
 {
+    printf("%d\n", root->value);
+    // case of only -> root is empty
     if (root -> value == -1)
     {
         printf("tree is empty\n");
@@ -45,7 +47,6 @@ int search(node* root, int sval)
     {
         return 0;
     }
-    
 }
 
 node * insert_search(node* root, int x)
@@ -93,6 +94,11 @@ void insert(node *root, int cval, int lval, int rval)
         lchild_node->value = lval;
         rchild_node->value = rval;
 
+        lchild_node->lchild = NULL;
+        lchild_node->rchild = NULL;
+        rchild_node->lchild = NULL;
+        rchild_node->rchild = NULL;
+
         root->lchild = lchild_node;
         root->rchild = rchild_node;
 
@@ -112,6 +118,9 @@ void insert(node *root, int cval, int lval, int rval)
         lchild_node->rchild = NULL;
         rchild_node->lchild = NULL;
         rchild_node->rchild = NULL;
+
+        fp->lchild = lchild_node;
+        fp->rchild = rchild_node;
         return;
     }
     
@@ -141,19 +150,24 @@ int valid(node *root, int cval, int lval, int rval)
 {
     if(root->value == -1)
         return 1;
+    
+    printf("valid process1 good\n");
+    int s = search(root, cval); // 여기가 문제 - search가 안됨.
+    printf("%d\n", s);
 
-    if(search(root, cval) == 0)
+    if(s == 0)
     {
-        printf("%d\n\n", search(root,cval));
         // invalid by rule 2.
         return 0;
     }
 
+    printf("valid process2 good\n");
     if(search(root, lval) == 1 || search(root, rval) == 1)
     {
         return 0;
     }
     
+    printf("valid process3 good\n");
     if (is_leaf_node(root, cval) == 1)
     {
         return 1;
@@ -213,13 +227,16 @@ int main(void)
         printf("good loop start\n");
         sscanf(str, "%d %d %d", &cval, &lval, &rval);
         printf("good sscanf : %d %d %d\n", cval, lval, rval);
-        if(valid(root, cval, lval, rval) == 0)
+        int n = valid(root, cval, lval, rval); 
+        printf("%d\n",n);
+        if(n == 0)
         {
             printf("Invalid: %d %d %d\n", cval, lval, rval);
             printf("good valid check\n");
             continue;
         }
         insert(root, cval, lval, rval);
+        printf("%d\n", root->lchild->value);
         printf("good insert\n");
     }
     fclose(fp);
