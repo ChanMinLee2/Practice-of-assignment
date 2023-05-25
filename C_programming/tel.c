@@ -11,6 +11,85 @@ struct tinfo
 };
 
 tinfo tlist[MAXWORD];
+int index_tlist = 0;
+
+int search(char * name)
+{
+    for (int index = 0; index < index_tlist; index++)
+    {
+        if (strstr(name, tlist->name) != NULL)
+        { 
+            return index;
+        }   
+    }
+
+    printf("not found\n");
+}
+
+void delete(char * str)
+{
+    int check = 0;
+    tinfo d_array[MAXWORD];
+    int index_d_array = 0;
+    int count = 0;
+    for (int index = 0; index < index_tlist; index++)
+    {
+        if (strstr(str, tlist->name) != NULL)
+        { 
+            count++;
+            strcpy(d_array[index_d_array++].name, str);
+        }
+
+        else if (strstr(str, tlist->phone) != NULL)
+        { 
+            count++;
+            strcpy(d_array[index_d_array++].name, str);
+        }
+
+        else if (strstr(str, tlist->memo) != NULL)
+        { 
+            count++;
+            strcpy(d_array[index_d_array++].name, str);
+        }
+        
+    }
+    if (count == 0)
+    {
+        printf("not found\n");
+    }
+
+    else //delete selected info 
+    {
+        for (int i = 0; i < index_d_array; i++)
+        {
+            printf("%d %s %s %s\n", d_array[i].name, d_array[i].phone, d_array[i].memo);
+        }
+        printf("which one? : ");
+        scanf("%d", &check);
+
+        if (check <= index_d_array)
+        {
+            int d_index = search(d_array->name);
+            for (int i = d_index; i < index_tlist; i++)
+            {
+                strcpy(tlist[i].name, tlist[i+1].name);
+                strcpy(tlist[i].phone, tlist[i+1].phone);
+                strcpy(tlist[i].memo, tlist[i+1].memo);
+            }
+            index_tlist--; 
+        }
+        else
+        {
+            printf("range out of delete index \n");
+        }
+    }
+    
+}
+
+void list(void)
+{
+
+}
 
 int main(int argc, char * argv)
 {
@@ -18,7 +97,6 @@ int main(int argc, char * argv)
     char temp[MAXWORD];  
     int check = 0;
     char * temp_fp;
-    int index_tlist = 0;
 
     while(fscanf(fp,"%s",temp) != EOF)
     {
@@ -58,25 +136,71 @@ int main(int argc, char * argv)
 
     argv++;
     argc--;
+    printf("%s\n", argv[0]);
 
-    if (argv[0] == "-a") // add option operate
+    if (strcmp(argv[0], "-a") == 0) // add option operate
     {
-        
+        char check;
+        printf("%s %s %s\n", argv[1], argv[2], argv[3]);
+        printf("add? [Y/N] : ");
+        scanf("%c", &check);
+        if (check == 'Y')
+        {
+            strcpy(tlist[index_tlist].name, argv[1]);
+            strcpy(tlist[index_tlist].phone, argv[2]);
+            strcpy(tlist[index_tlist].memo, argv[3]);
+        }
+
+        else
+        {
+            return 0;
+        }
     }
 
-    else if (argv[0] == "-d") // delete option operate
+    else if (strcmp(argv[0], "-d") == 0) // delete option operate
     {
-        /* code */
+        delete(argv[1]);
     }
     
-    else if (argv[0] == "-l") // list option oprate
+    else if (strcmp(argv[0] , "-l") == 0) // list option oprate
     {
-        /* code */
+        list();
     }
 
     else if (argc > 0) // search type oprate
     {
-        char keyword[] = argv[0] 
+        printf("%s\n", argv[0]);
+        char *keyword;
+        int count = 0;
+        strcpy(keyword, argv[0]);
+        printf("%s\n", keyword);
+
+        // loop for searching
+        for (int index = 0; index < index_tlist; index++)
+        {
+            if (strstr(keyword, tlist->name) != NULL)
+            { 
+                count++;
+                printf("%d %s %s %s \n", count, tlist[index].name, tlist[index].phone, tlist[index].memo);
+            }
+
+            else if (strstr(keyword, tlist->phone) != NULL)
+            { 
+                count++;
+                printf("%d %s %s %s \n", count, tlist[index].name, tlist[index].phone, tlist[index].memo);
+            }
+
+            else if (strstr(keyword, tlist->memo) != NULL)
+            { 
+                count++;
+                printf("%d %s %s %s \n", count, tlist[index].name, tlist[index].phone, tlist[index].memo);
+            }            
+        }
+        if (count == 0)
+        {
+            printf("not found \n");
+        }
+        
     }
     
 
