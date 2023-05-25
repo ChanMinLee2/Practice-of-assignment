@@ -59,22 +59,51 @@ int main(int argc, char * argv)
     argv++;
     argc--;
 
-    if (argv[0] == "-d")
+    if (argv[0] == "-a") // add option operate
     {
-        /* code */
+        
     }
 
-    else if (argv[0] == "-a")
+    else if (argv[0] == "-d") // delete option operate
     {
         /* code */
     }
     
-    else if (argv[0] == "-l")
+    else if (argv[0] == "-l") // list option oprate
     {
         /* code */
     }
+
+    else if (argc > 0) // search type oprate
+    {
+        char keyword[] = argv[0] 
+    }
     
 
+    else if (argc == 0) // manual type oprate
+    {
+        printf(" 1. how to input\n");
+        printf(" : ./tel [-adl] words \n\n");
+        printf(" 2. what is option\n");
+        printf(" : each options are oprated indepently");
+        printf(" thus, their can't be used together in one time \n\n");
+        printf(" 2-0. manual -- no option, no input words\n");
+        printf(" : ex) ./tel \n");
+        printf(" : it can print manual for this tel program \n\n");
+        printf(" 2-1. search -- no option, but words input exists \n");
+        printf(" : ex) ./tel words \n");
+        printf(" : it can search the info as keyword, in list of tel \n\n");
+        printf(" 2-2. add option\n");
+        printf(" : ex) ./tel -a words \n");
+        printf(" : it can add new info to list of tel \n\n");
+        printf(" 2-3. delete option\n");
+        printf(" : ex) ./tel -d words \n");
+        printf(" : it can delete selected info in list of tel \n\n");
+        printf(" 2-4. list option\n");
+        printf(" : ex) ./tel - l words \n");
+        printf(" : it can print every elements in list of tel \n\n");
+    }
+    
     return 0;
 }
 
