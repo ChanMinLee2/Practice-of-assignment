@@ -88,10 +88,10 @@ void delete(char * str)
 
 void list(void)
 {
-
+    
 }
 
-int main(int argc, char * argv)
+int main(int argc, char * argv[])
 {
     FILE *fp = fopen("data.txt", "r+t");
     char temp[MAXWORD];  
@@ -169,11 +169,11 @@ int main(int argc, char * argv)
 
     else if (argc > 0) // search type oprate
     {
-        printf("%s\n", argv[0]);
+        printf("search start - argv %s\n", argv[0]);
         char *keyword;
         int count = 0;
-        strcpy(keyword, argv[0]);
-        printf("%s\n", keyword);
+        strcpy(keyword, argv[0]); // 
+        printf("search keyword %s\n", keyword);
 
         // loop for searching
         for (int index = 0; index < index_tlist; index++)
