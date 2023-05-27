@@ -10,8 +10,8 @@ struct tinfo
     char memo[40];
 };
 
-tinfo tlist[MAXWORD];
-int index_tlist = 0;
+tinfo tlist[MAXWORD]; // tel info array
+int index_tlist = 0; // count of tlist
 
 int search(char * name)
 {
@@ -88,7 +88,10 @@ void delete(char * str)
 
 void list(void)
 {
-    
+    for (int list_index = 0; list_index < index_tlist; list_index++)
+    {
+        printf("%d %s %s %s \n", list_index+1, tlist[list_index].name, tlist[list_index].phone, tlist[list_index].memo); 
+    }
 }
 
 int main(int argc, char * argv[])
@@ -102,24 +105,39 @@ int main(int argc, char * argv[])
     {
         char * temp_fp = temp;
         strtok(temp,":");
+        int push_point = 0;
         while (temp_fp != NULL)
         {
-            printf("%s\n", temp_fp);
+            //printf("%s\n", temp_fp);
             if (check == 0)
             {
-                strcpy(tlist[index_tlist].name, temp_fp);
+                for (int scan = 0; scan < index_tlist; scan++)
+                {
+                    if(strcmp(tlist[scan].name, temp_fp) >= 0)
+                    {
+                        push_point = scan;
+                    }
+
+                    if (push_point > 0)
+                    {
+                        tlist[scan+1] = tlist[scan];
+                    }
+                    
+                }
+                strcpy(tlist[push_point].name, temp_fp);
                 check++;
             }
             
             else if (check == 1)
             { 
-                strcpy(tlist[index_tlist].phone, temp_fp);
+                strcpy(tlist[push_point].phone, temp_fp);
                 check++;
             }
             
             else if (check == 2)
             {
-                strcpy(tlist[index_tlist++].memo, temp_fp);
+                strcpy(tlist[push_point].memo, temp_fp);
+                index_tlist++;
                 check++;
             }
             temp_fp = strtok(NULL, ":"); 
@@ -141,14 +159,28 @@ int main(int argc, char * argv[])
     if (strcmp(argv[0], "-a") == 0) // add option operate
     {
         char check;
+        int push_point = 0;
         printf("%s %s %s\n", argv[1], argv[2], argv[3]);
         printf("add? [Y/N] : ");
         scanf("%c", &check);
         if (check == 'Y')
         {
-            strcpy(tlist[index_tlist].name, argv[1]);
-            strcpy(tlist[index_tlist].phone, argv[2]);
-            strcpy(tlist[index_tlist].memo, argv[3]);
+            for (int scan = 0; scan < index_tlist; scan++)
+            {
+                if( strcmp(tlist[scan].name, argv[1]) >= 0 )
+                {
+                    push_point = scan;
+                }
+
+                if (push_point > 0 )
+                {
+                    tlist[scan + 1] = tlist[scan];
+                }
+            }
+            
+            strcpy(tlist[push_point].name, argv[1]);
+            strcpy(tlist[push_point].phone, argv[2]);
+            strcpy(tlist[push_point].memo, argv[3]);
         }
 
         else
