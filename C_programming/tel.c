@@ -26,7 +26,7 @@ int search(char * name)
     printf("not found\n");
 }
 
-void delete(char * str)
+void delete(char * str) // name, phone
 {
     int check = 0;
     tinfo d_array[MAXWORD];
@@ -62,28 +62,53 @@ void delete(char * str)
     {
         for (int i = 0; i < index_d_array; i++)
         {
-            printf("%d %s %s %s\n", d_array[i].name, d_array[i].phone, d_array[i].memo);
+            printf("%d %s %s %s\n", i+1, d_array[i].name, d_array[i].phone, d_array[i].memo);
         }
         printf("which one? : ");
         scanf("%d", &check);
+        check--; // check is used for index
 
-        if (check <= index_d_array)
+        // data.txt modify
+        FILE *original_file = fopen("data.txt", "r");  // open the original file in read mode
+        FILE *new_file = fopen("data.txt", "w");  // open a new file in write mode
+
+        if (original_file == NULL || new_file == NULL) 
         {
-            int d_index = search(d_array->name);
-            for (int i = d_index; i < index_tlist; i++)
+            printf("Unable to open the file(s).\n");
+            return;
+        }      
+
+        char line[100]; // buffer
+
+        // read the original file line by line
+        while (fgets(line, sizeof(line), original_file) != NULL) 
+        {
+            // Check if the line should be deleted
+            if(strstr(line, d_array[check].name) != NULL )  
             {
-                strcpy(tlist[i].name, tlist[i+1].name);
-                strcpy(tlist[i].phone, tlist[i+1].phone);
-                strcpy(tlist[i].memo, tlist[i+1].memo);
+                ; // no writing to new file
             }
-            index_tlist--; 
-        }
-        else
-        {
-            printf("range out of delete index \n");
+            else
+            {
+                // Write the line to the new file if it should not be deleted
+                fputs(line, new_file);
+            }
+            fclose(original_file);  // Close the original file
+            fclose(new_file);  // Close the new file
+
+            // Delete the original file
+            if (remove("data.txt") != 0) {
+                printf("Unable to delete the original file.\n");
+                return;
+            }
+
+            // Rename the new file to have the same name as the original file
+            if (rename("temp.txt", "data.txt") != 0) {
+                printf("Unable to rename the new file.\n");
+                return;
+            }
         }
     }
-    
 }
 
 void list(void)
@@ -95,7 +120,6 @@ void list(void)
 }
 
 
-// 05-27 to do debug for program oprating with each option
 int main(int argc, char * argv[])
 {
     FILE *fp = fopen("data.txt", "r+t");
@@ -164,7 +188,7 @@ int main(int argc, char * argv[])
         printf("%s %s %s\n", argv[1], argv[2], argv[3]);
         printf("add? [Y/N] : ");
         scanf("%c", &check);
-        if (check == 'Y')
+        if (check == 'Y' || check == 'y')
         {
             for (int scan = 0; scan < index_tlist; scan++)
             {
@@ -182,6 +206,10 @@ int main(int argc, char * argv[])
             strcpy(tlist[push_point].name, argv[1]);
             strcpy(tlist[push_point].phone, argv[2]);
             strcpy(tlist[push_point].memo, argv[3]);
+
+            FILE *fp = fopen("data.txt", "r + t");
+            fprintf(fp," %s:%s:%s", argv[1], argv[2], argv[3]);
+            fclose(fp);
         }
 
         else
@@ -192,7 +220,7 @@ int main(int argc, char * argv[])
 
     else if (strcmp(argv[0], "-d") == 0) // delete option operate
     {
-        delete(argv[1]);
+        delete(argv[1], argv[2]);
     }
     
     else if (strcmp(argv[0] , "-l") == 0) // list option oprate
