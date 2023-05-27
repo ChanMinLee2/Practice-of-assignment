@@ -94,6 +94,8 @@ void list(void)
     }
 }
 
+
+// 05-27 to do debug for program oprating with each option
 int main(int argc, char * argv[])
 {
     FILE *fp = fopen("data.txt", "r+t");
@@ -149,7 +151,6 @@ int main(int argc, char * argv[])
         
     }
     temp_fp = strtok(temp, ":"); 
-    
     printf("%s %s %s\n", tlist[0].name, tlist[0].phone, tlist[0].memo);    
 
     argv++;
