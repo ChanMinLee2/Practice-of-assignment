@@ -53,9 +53,9 @@ int search(char * keyword)
 }
 
 void add(char * str1, char * str2, char* str3 ) // numeric order in alphabet
-// 이거 하나 추가하면 왜 list 옵션에서 5개 되어야 하는데 4개 밖에없지? bae 날아감...
 {
     char check;
+    int point_check = 0;
     int push_point = 0;
     printf("%s %s %s\n", str1, str2, str3);
     printf("add? [Y/N] : ");
@@ -64,36 +64,50 @@ void add(char * str1, char * str2, char* str3 ) // numeric order in alphabet
     {
         for (int scan = 0; scan < index_tlist; scan++)
         {
-            if (scan == index_tlist-1 && strcmp(tlist[scan].name, str1) <= 0 )
-            {
-                push_point = index_tlist;
-                break;
-            }
             printf("index_tlist : %d, scan : %d\n", index_tlist, scan);
-            printf("%s %s\n", tlist[scan].name , str1);
-            if( strcmp(tlist[scan].name, str1) >= 0 )
+            printf("tlist[scan] : %s str1 : %s\n", tlist[scan].name , str1);
+            if(strcmp(tlist[scan].name, str1) >= 0) // equal name - (diffrent person) including 
             {
+                printf("add road2\n");
                 push_point = scan;
+                point_check++;
                 printf("push_point : %d, scan : %d\n", push_point, scan);
-            }
-
-            if (push_point > 0 )
-            {
-                tlist[scan + 1] = tlist[scan];
+                break;
             }
         }
 
+        int flag = 0;
+        if (point_check == 0)
+        {
+            flag = index_tlist;
+        }
+        else
+        {
+            flag = push_point;
+        }
+        
+        printf("flag : %d\n", flag);
+        if (flag != index_tlist)
+        {
+            
+            for (int push_index = index_tlist; push_index >= push_point; push_index--) 
+            {
+                tlist[push_index+1] = tlist[push_index];
+            }
+        }
+        
+        strcpy(tlist[flag].name, str1);
+        strcpy(tlist[flag].phone, str2);
+        strcpy(tlist[flag].memo, str3);
+
         index_tlist++;
-        strcpy(tlist[push_point].name, str1);
-        strcpy(tlist[push_point].phone, str2);
-        strcpy(tlist[push_point].memo, str3);
         
         for (int i = 0; i < index_tlist; i++)
         {
             printf("%s\n",tlist[i].name);
         }   
 
-        FILE *fp = fopen("data.txt", "w");
+        FILE *fp = fopen("data.txt", "w+");
         for (int index_add = 0; index_add < index_tlist; index_add++)
         {
             printf("%s:%s:%s\n", tlist[index_add].name, tlist[index_add].phone, tlist[index_add].memo);
@@ -105,11 +119,12 @@ void add(char * str1, char * str2, char* str3 ) // numeric order in alphabet
 
     else
     {
+        printf("invalid access");
         return;
     }
 }
 
-void delete(char * keyword) // 왜못받는데 미친놈아
+void delete(char * keyword) // 왜 다지우는데 미친놈아
 {
     int check = 0;
     tinfo d_array[MAXWORD];
@@ -117,25 +132,31 @@ void delete(char * keyword) // 왜못받는데 미친놈아
     int count = 0;
     for (int index = 0; index < index_tlist; index++)
     {
-        if (strstr(keyword, tlist[index].name) != NULL)
+        if (strstr(tlist[index].name, keyword) != NULL)
         { 
             count++;
-            strcpy(d_array[index_d_array].name, keyword);
-            printf("strcopy success : %s\n", d_array[index_d_array].name);
+            strcpy(d_array[index_d_array].name, tlist[index].name);
+            strcpy(d_array[index_d_array++].phone, tlist[index].phone);
+            strcpy(d_array[index_d_array-1].memo, tlist[index].memo);
+            printf("strcopy success1 : %s %s %s\n", d_array[index_d_array-1].name, d_array[index_d_array-1].phone, d_array[index_d_array-1].memo);
         }
 
-        else if (strstr(keyword, tlist[index].phone) != NULL)
+        else if (strstr(tlist[index].phone, keyword) != NULL)
         { 
             count++;
-            strcpy(d_array[index_d_array++].phone, keyword);
-            printf("strcopy success : %s\n", d_array[index_d_array].phone);
+            strcpy(d_array[index_d_array].name, tlist[index].name);
+            strcpy(d_array[index_d_array++].phone, tlist[index].phone);
+            strcpy(d_array[index_d_array-1].memo, tlist[index].memo);
+            printf("strcopy success2 : %s %s %s\n", d_array[index_d_array-1].name, d_array[index_d_array-1].phone, d_array[index_d_array-1].memo);
         }
 
-        else if (strstr(keyword, tlist[index].memo) != NULL)
+        else if (strstr(tlist[index].memo, keyword) != NULL)
         { 
             count++;
-            strcpy(d_array[index_d_array-1].memo, keyword);
-            printf("strcopy success : %s\n", d_array[index_d_array].memo);
+            strcpy(d_array[index_d_array].name, tlist[index].name);
+            strcpy(d_array[index_d_array++].phone, tlist[index].phone);
+            strcpy(d_array[index_d_array-1].memo, tlist[index].memo);
+            printf("strcopy success3 : %s %s %s\n", d_array[index_d_array-1].name, d_array[index_d_array-1].phone, d_array[index_d_array-1].memo);
         }
         
     }
@@ -158,10 +179,12 @@ void delete(char * keyword) // 왜못받는데 미친놈아
 
         char line[100]; // buffer
 
+        // 이제 여기서부터 문제다. add처럼 다시쓸때 list 그대로 갖다쓸까
         if (check >= 0 && check < index_tlist)
         {
+            printf("check : %d, deletename : %s\n", check, d_array[check].name);
             // data.txt modify
-            FILE *original_file = fopen("data.txt", "r");  // open the original file in read mode
+            FILE *original_file = fopen("data.txt", "r+");  // open the original file in read mode
             FILE *new_file = fopen("data.txt", "w");       // open a new file in write mode
 
             if (original_file == NULL || new_file == NULL) 
@@ -170,38 +193,39 @@ void delete(char * keyword) // 왜못받는데 미친놈아
                 return;
             }
 
-            // read the original file line by line
+            // loop for reading the original file line by line
             while (fgets(line, sizeof(line), original_file) != NULL) 
             {
                 printf("line : %s\n", line);
-                // Check if the line should be deleted
+                // check if the line should be deleted
                 if(strstr(line, d_array[check].name) != NULL )  
                 {
-                    ; // no writing to new file
+                    printf("skip move"); // no writing to new file
                 }
                 else
                 {
                     // write the line to the new file if it should not be deleted
                     fputs(line, new_file);
-                    printf("selected line : %s\n", line);
-                }
-                fclose(original_file);  // close the original file
-                fclose(new_file);  // close the new file
-
-                // delete the original file
-                if (remove("data.txt") != 0) 
-                {
-                    printf("Unable to delete the original file.\n");
-                    return;
-                }
-
-                // rename the new file to have the same name as the original file
-                if (rename("temp.txt", "data.txt") != 0) 
-                {
-                    printf("Unable to rename the new file.\n");
-                    return;
+                    printf("moved line : %s\n", line);
                 }
             }
+            fclose(original_file);  // close the original file
+            fclose(new_file);  // close the new file
+
+            // delete the original file
+            if (remove("data.txt") != 0) 
+            {
+                printf("Unable to delete the original file.\n");
+                return;
+            }
+
+            // rename the new file to have the same name as the original file
+            if (rename("temp.txt", "data.txt") != 0) 
+            {
+                printf("Unable to rename the new file.\n");
+                return;
+            }
+            
         }
 
         else // not valid input by user 
@@ -294,6 +318,9 @@ int main(int argc, char * argv[])
     
     else if (argc == 0) // manual type oprate
     {
+        printf(" 0. what is this?");
+        printf(" : tel info(name, phone, memo) list program in order of alphabet");
+        printf(" : in alphabet order, upper case is front than lower case");
         printf(" 1. how to input\n");
         printf(" : ./tel [-adl] words \n\n");
         printf(" 2. what is option\n");
@@ -307,7 +334,7 @@ int main(int argc, char * argv[])
         printf(" : it can search the info as keyword, in list of tel \n\n");
         printf(" 2-2. add option\n");
         printf(" : ex) ./tel -a words \n");
-        printf(" : it can add new info to list of tel \n\n");
+        printf(" : it can add new info to list of tel by alphabetic order \n\n");
         printf(" 2-3. delete option\n");
         printf(" : ex) ./tel -d words \n");
         printf(" : it can delete selected info in list of tel \n\n");
