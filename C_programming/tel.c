@@ -13,33 +13,56 @@ struct tinfo
 tinfo tlist[MAXWORD]; // tel info arrays
 int index_tlist = 0; // count of tlist
 
+
+
+void sorting(void) // tlist sorting by alphabetical order
+{
+    int index_min = 0;
+    tinfo temp;
+    for (int i = 0; i < index_tlist; i++)
+    {
+        for (int index = i; index < index_tlist; index++)
+        {
+            if (strcmp(tlist[index].name, tlist[index+1].name) > 0)
+            {
+                temp = tlist[index];
+                tlist[index] = tlist[index+1];
+                tlist[index+1] = temp;
+            }
+        }
+    }
+}
+
 int search(char * keyword)
 {
+    printf("keyword : %s\n", keyword);
     int search_buffer[MAXWORD];
     int buffer_index = 0;
     for (int index = 0; index < index_tlist; index++)
     {
-        if (strstr(keyword, tlist[index].name) != NULL)
+        if (strstr(tlist[index].name, keyword) != NULL)
         { 
             search_buffer[buffer_index++] = index;
-            continue;
         }   
 
-        else if (strstr(keyword, tlist[index].phone) != NULL)
+        else if (strstr(tlist[index].phone, keyword) != NULL)
         {
             search_buffer[buffer_index++] = index;
-            continue;
+            
         }
 
-        else if (tlist[index].memo != NULL && strstr(keyword, tlist[index].memo) != NULL)
+        else if (tlist[index].memo != NULL && strstr(tlist[index].memo, keyword) != NULL)
         {
             search_buffer[buffer_index++] = index;
-            continue;
+            
         }
     }
+
+    int temp = 0;
     for (int i = 0; i < buffer_index; i++)
     {
-        printf("%d %s %s %s\n", i+1, tlist[i].name, tlist[i].phone, tlist[i].memo);
+        temp = search_buffer[i];
+        printf("%d %s %s %s\n", i+1, tlist[temp].name, tlist[temp].phone, tlist[temp].memo);
     }
     
     if (buffer_index == 0)
@@ -65,22 +88,22 @@ void add(char * str1, char * str2, char* str3 ) // numeric order in alphabet
     // if check is y or Y, add new info to tlist and data.txt 
     if (check == 'Y' || check == 'y')
     {
+        // loop for location to add new info 
         for (int scan = 0; scan < index_tlist; scan++) 
         {
             //printf("index_tlist : %d, scan : %d\n", index_tlist, scan);
             //printf("tlist[scan] : %s str1 : %s\n", tlist[scan].name , str1);
             if(strcmp(tlist[scan].name, str1) >= 0) // equal name - (diffrent person) including 
             {
-                printf("add road2\n");
                 push_point = scan;
                 point_check++;
-                printf("push_point : %d, scan : %d\n", push_point, scan);
+                //printf("push_point : %d, scan : %d\n", push_point, scan);
                 break;
             }
         }
 
         int flag = 0;
-        if (point_check == 0)
+        if (point_check == 0) // no if sentence True
         {
             flag = index_tlist;
         }
@@ -98,12 +121,12 @@ void add(char * str1, char * str2, char* str3 ) // numeric order in alphabet
                 tlist[push_index+1] = tlist[push_index];
             }
         }
-        
+        // add new info to tlist
         strcpy(tlist[flag].name, str1);
         strcpy(tlist[flag].phone, str2);
         strcpy(tlist[flag].memo, str3);
 
-        index_tlist++;
+        index_tlist++; // by add info 
         
         for (int i = 0; i < index_tlist; i++)
         {
@@ -177,24 +200,34 @@ void delete(char * keyword)
         scanf("%d", &check);
         check--; // check is used for index
 
-        // tlist modifying
-        index_del = d_array[check]; 
-        for (index_del; index_del < index_tlist; index_del++)
+        if (check >= 0)
         {
-            tlist[index_del] = tlist[index_del+1];
-        }
-        index_tlist--; // one person's info delete in array, not data file
-        //printf("%d\n", index_tlist);
+            // tlist modifying
+            index_del = d_array[check]; 
+            for (index_del; index_del < index_tlist; index_del++)
+            {
+                tlist[index_del] = tlist[index_del+1];
+            }
+            index_tlist--; // one person's info delete in array, not data file
+            //printf("%d\n", index_tlist);
 
-        // tlist is complete, data.txt modifying starts
-        FILE *fp = fopen("data.txt", "w+");
-        for (int index = 0; index < index_tlist; index++)
+            // tlist is complete, data.txt modifying starts
+            FILE *fp = fopen("data.txt", "w+");
+            for (int index = 0; index < index_tlist; index++)
+            {
+                //printf("%s:%s:%s\n", tlist[index].name, tlist[index].phone, tlist[index].memo);
+                fprintf(fp,"%s:%s:%s\n", tlist[index].name, tlist[index].phone, tlist[index].memo);
+            }
+            
+            fclose(fp);
+            return;
+        }
+        else // check's range over 
         {
-            printf("%s:%s:%s\n", tlist[index].name, tlist[index].phone, tlist[index].memo);
-            fprintf(fp,"%s:%s:%s\n", tlist[index].name, tlist[index].phone, tlist[index].memo);
+            printf("invalid access");
+            return;
         }
         
-        fclose(fp);
     }
 }
 
