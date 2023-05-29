@@ -54,18 +54,21 @@ int search(char * keyword)
 
 void add(char * str1, char * str2, char* str3 ) // numeric order in alphabet
 {
+    // valiables declation
     char check;
     int point_check = 0;
     int push_point = 0;
+    // check for user
     printf("%s %s %s\n", str1, str2, str3);
     printf("add? [Y/N] : ");
     scanf("%c", &check);
+    // if check is y or Y, add new info to tlist and data.txt 
     if (check == 'Y' || check == 'y')
     {
-        for (int scan = 0; scan < index_tlist; scan++)
+        for (int scan = 0; scan < index_tlist; scan++) 
         {
-            printf("index_tlist : %d, scan : %d\n", index_tlist, scan);
-            printf("tlist[scan] : %s str1 : %s\n", tlist[scan].name , str1);
+            //printf("index_tlist : %d, scan : %d\n", index_tlist, scan);
+            //printf("tlist[scan] : %s str1 : %s\n", tlist[scan].name , str1);
             if(strcmp(tlist[scan].name, str1) >= 0) // equal name - (diffrent person) including 
             {
                 printf("add road2\n");
@@ -107,24 +110,25 @@ void add(char * str1, char * str2, char* str3 ) // numeric order in alphabet
             printf("%s\n",tlist[i].name);
         }   
 
+        // tlist is complete, data.txt modifying starts
         FILE *fp = fopen("data.txt", "w+");
         for (int index_add = 0; index_add < index_tlist; index_add++)
         {
-            printf("%s:%s:%s\n", tlist[index_add].name, tlist[index_add].phone, tlist[index_add].memo);
+            //printf("%s:%s:%s\n", tlist[index_add].name, tlist[index_add].phone, tlist[index_add].memo);
             fprintf(fp,"%s:%s:%s\n", tlist[index_add].name, tlist[index_add].phone, tlist[index_add].memo);
         }
         
         fclose(fp);
     }
 
-    else
+    else // not Y or y, it is not invalid
     {
         printf("invalid access");
         return;
     }
 }
 
-void delete(char * keyword) // 왜 다지우는데 미친놈아
+void delete(char * keyword) 
 {
     int check = 0;
     int d_array[MAXWORD];
@@ -151,16 +155,19 @@ void delete(char * keyword) // 왜 다지우는데 미친놈아
         }
         
     }
-    printf("index_darray : %d\n", index_d_array);
-    if (index_d_array == 0)
+    //printf("index_darray : %d\n", index_d_array);
+
+    // input info is not in tlist
+    if (index_d_array == 0) 
     {
         printf("not found\n");
     }
 
-    else //delete selected info 
+    else //input info is in tlist, delete selected info 
     {
-        printf("start delete process, index darray : %d \n", index_d_array);
+        //printf("start delete process, index darray : %d \n", index_d_array);
         int index_del = 0;
+        // check for user
         for (int i = 0; i < index_d_array; i++)
         {
             index_del = d_array[i];
@@ -170,19 +177,16 @@ void delete(char * keyword) // 왜 다지우는데 미친놈아
         scanf("%d", &check);
         check--; // check is used for index
 
-        index_del = d_array[check];
-        //add 처럼 tlist를 정리하고 그다음에 그대로 옮겨적기.
+        // tlist modifying
+        index_del = d_array[check]; 
         for (index_del; index_del < index_tlist; index_del++)
         {
             tlist[index_del] = tlist[index_del+1];
         }
         index_tlist--; // one person's info delete in array, not data file
-        printf("%d\n", index_tlist);
-        for (int i = 0; i < index_tlist; i++)
-        {
-            printf("%s %s %s\n", tlist[i].name,tlist[i].phone, tlist[i].memo);
-        }
+        //printf("%d\n", index_tlist);
 
+        // tlist is complete, data.txt modifying starts
         FILE *fp = fopen("data.txt", "w+");
         for (int index = 0; index < index_tlist; index++)
         {
@@ -203,18 +207,22 @@ void list(void)
     }
 }
 
-int main(int argc, char * argv[])
+int main(int argc, char * argv[]) //commandline arguments
 {
+    // data file open
     FILE *fp = fopen("data.txt", "r+t");
+    // buffer and buffer pointer for input from data.txt
     char temp[MAXWORD];  
-    
     char * temp_fp;
 
+    // loop for input tel info from data.txt to tlist
     while(fscanf(fp,"%s",temp) != EOF) 
     {
         int check = 0;
         char * temp_fp = temp;
+        //input line tokenization by strtok
         strtok(temp,":");
+        // loop for inputing info from line to tlist, each token to right space by if sentences
         while (temp_fp != NULL)
         {
             printf("%s\n", temp_fp);
@@ -225,7 +233,8 @@ int main(int argc, char * argv[])
             }
             
             else if (check == 1)
-            { 
+            {
+                // no memo case covering - index++
                 strcpy(tlist[index_tlist++].phone, temp_fp);
                 check++;
             }
@@ -235,24 +244,22 @@ int main(int argc, char * argv[])
                 strcpy(tlist[index_tlist-1].memo, temp_fp);
                 check++;
             }
-            temp_fp = strtok(NULL, ":"); 
-        }
-        if (temp_fp == NULL)
-        {
-            check == 0;
+            temp_fp = strtok(NULL, ":"); // doing like loop's increment operator - retokenization from broken pointer position 
         }
         
     }
-    temp_fp = strtok(temp, ":"); 
+    temp_fp = strtok(temp, ":"); // last tok
     
-    for (int i = 0; i < index_tlist; i++)
-    {
-        printf("%s %s %s\n", tlist[i].name, tlist[i].phone, tlist[i].memo);   
-    }
+    // for debug
+    //for (int i = 0; i < index_tlist; i++)
+    //{
+    //    printf("%s %s %s\n", tlist[i].name, tlist[i].phone, tlist[i].memo);   
+    //}
 
+    // commandline arguments control - no filename storing
     argv++;
     argc--;
-    printf("%s %d %d\n", argv[0], argc, index_tlist);
+    //printf("%s %d %d\n", argv[0], argc, index_tlist);
 
     if (argv[0] != NULL && strcmp(argv[0], "-a") == 0) // add option operate
     {
