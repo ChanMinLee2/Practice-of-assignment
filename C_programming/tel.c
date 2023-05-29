@@ -127,7 +127,7 @@ void add(char * str1, char * str2, char* str3 ) // numeric order in alphabet
 void delete(char * keyword) // 왜 다지우는데 미친놈아
 {
     int check = 0;
-    tinfo d_array[MAXWORD];
+    int d_array[MAXWORD];
     int index_d_array = 0;
     int count = 0;
     for (int index = 0; index < index_tlist; index++)
@@ -135,33 +135,24 @@ void delete(char * keyword) // 왜 다지우는데 미친놈아
         if (strstr(tlist[index].name, keyword) != NULL)
         { 
             count++;
-            strcpy(d_array[index_d_array].name, tlist[index].name);
-            strcpy(d_array[index_d_array++].phone, tlist[index].phone);
-            strcpy(d_array[index_d_array-1].memo, tlist[index].memo);
-            printf("strcopy success1 : %s %s %s\n", d_array[index_d_array-1].name, d_array[index_d_array-1].phone, d_array[index_d_array-1].memo);
+            d_array[index_d_array++] = index;
         }
 
         else if (strstr(tlist[index].phone, keyword) != NULL)
         { 
             count++;
-            strcpy(d_array[index_d_array].name, tlist[index].name);
-            strcpy(d_array[index_d_array++].phone, tlist[index].phone);
-            strcpy(d_array[index_d_array-1].memo, tlist[index].memo);
-            printf("strcopy success2 : %s %s %s\n", d_array[index_d_array-1].name, d_array[index_d_array-1].phone, d_array[index_d_array-1].memo);
+            d_array[index_d_array++] = index;
         }
 
         else if (strstr(tlist[index].memo, keyword) != NULL)
         { 
             count++;
-            strcpy(d_array[index_d_array].name, tlist[index].name);
-            strcpy(d_array[index_d_array++].phone, tlist[index].phone);
-            strcpy(d_array[index_d_array-1].memo, tlist[index].memo);
-            printf("strcopy success3 : %s %s %s\n", d_array[index_d_array-1].name, d_array[index_d_array-1].phone, d_array[index_d_array-1].memo);
+            d_array[index_d_array++] = index;
         }
         
     }
-    printf("count : %d\n", count);
-    if (count == 0)
+    printf("index_darray : %d\n", index_d_array);
+    if (index_d_array == 0)
     {
         printf("not found\n");
     }
@@ -169,70 +160,37 @@ void delete(char * keyword) // 왜 다지우는데 미친놈아
     else //delete selected info 
     {
         printf("start delete process, index darray : %d \n", index_d_array);
+        int index_del = 0;
         for (int i = 0; i < index_d_array; i++)
         {
-            printf("%d %s %s %s\n", i+1, d_array[i].name, d_array[i].phone, d_array[i].memo);
+            index_del = d_array[i];
+            printf("%d %s %s %s\n", index_del+1, tlist[index_del].name, tlist[index_del].phone, tlist[index_del].memo);
         }
         printf("which one? : ");
         scanf("%d", &check);
         check--; // check is used for index
 
-        char line[100]; // buffer
-
-        // 이제 여기서부터 문제다. add처럼 다시쓸때 list 그대로 갖다쓸까
-        if (check >= 0 && check < index_tlist)
+        index_del = d_array[check];
+        //add 처럼 tlist를 정리하고 그다음에 그대로 옮겨적기.
+        for (index_del; index_del < index_tlist; index_del++)
         {
-            printf("check : %d, deletename : %s\n", check, d_array[check].name);
-            // data.txt modify
-            FILE *original_file = fopen("data.txt", "r+");  // open the original file in read mode
-            FILE *new_file = fopen("data.txt", "w");       // open a new file in write mode
-
-            if (original_file == NULL || new_file == NULL) 
-            {
-                printf("Unable to open the file(s).\n");
-                return;
-            }
-
-            // loop for reading the original file line by line
-            while (fgets(line, sizeof(line), original_file) != NULL) 
-            {
-                printf("line : %s\n", line);
-                // check if the line should be deleted
-                if(strstr(line, d_array[check].name) != NULL )  
-                {
-                    printf("skip move"); // no writing to new file
-                }
-                else
-                {
-                    // write the line to the new file if it should not be deleted
-                    fputs(line, new_file);
-                    printf("moved line : %s\n", line);
-                }
-            }
-            fclose(original_file);  // close the original file
-            fclose(new_file);  // close the new file
-
-            // delete the original file
-            if (remove("data.txt") != 0) 
-            {
-                printf("Unable to delete the original file.\n");
-                return;
-            }
-
-            // rename the new file to have the same name as the original file
-            if (rename("temp.txt", "data.txt") != 0) 
-            {
-                printf("Unable to rename the new file.\n");
-                return;
-            }
-            
+            tlist[index_del] = tlist[index_del+1];
+        }
+        index_tlist--; // one person's info delete in array, not data file
+        printf("%d\n", index_tlist);
+        for (int i = 0; i < index_tlist; i++)
+        {
+            printf("%s %s %s\n", tlist[i].name,tlist[i].phone, tlist[i].memo);
         }
 
-        else // not valid input by user 
+        FILE *fp = fopen("data.txt", "w+");
+        for (int index = 0; index < index_tlist; index++)
         {
-            printf("invalid access");
-            return;
+            printf("%s:%s:%s\n", tlist[index].name, tlist[index].phone, tlist[index].memo);
+            fprintf(fp,"%s:%s:%s\n", tlist[index].name, tlist[index].phone, tlist[index].memo);
         }
+        
+        fclose(fp);
     }
 }
 
@@ -334,10 +292,10 @@ int main(int argc, char * argv[])
         printf(" : it can search the info as keyword, in list of tel \n\n");
         printf(" 2-2. add option\n");
         printf(" : ex) ./tel -a words \n");
-        printf(" : it can add new info to list of tel by alphabetic order \n\n");
+        printf(" : it can add one person's new info to list of tel by alphabetic order \n\n");
         printf(" 2-3. delete option\n");
         printf(" : ex) ./tel -d words \n");
-        printf(" : it can delete selected info in list of tel \n\n");
+        printf(" : it can delete selected one person's info in list of tel \n\n");
         printf(" 2-4. list option\n");
         printf(" : ex) ./tel - l words \n");
         printf(" : it can print every elements in list of tel \n\n");
