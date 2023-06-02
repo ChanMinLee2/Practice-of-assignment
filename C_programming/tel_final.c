@@ -73,7 +73,7 @@ int search(char * keyword)
         for (int i = 0; i < buffer_index; i++)
         {
 		temp = search_buffer[i];
-        	printf("%d %s %s %s\n", i+1, tlist[temp].name, tlist[temp].phone, tlist[temp].memo);
+                printf("%d %s %s %s\n", i+1, tlist[temp].name, tlist[temp].phone, tlist[temp].memo);
         }
         
 	// result print
@@ -104,15 +104,15 @@ void add(char * str1, char * str2, char* str3 ) // numeric order in alphabet
                 // loop for location to add new info 
                 for (int scan = 0; scan < index_tlist; scan++) 
                 {
-                    //printf("index_tlist : %d, scan : %d\n", index_tlist, scan);
-                    //printf("tlist[scan] : %s str1 : %s\n", tlist[scan].name , str1);
-                    if(strcmp(tlist[scan].name, str1) >= 0) // equal name - (diffrent person) including 
-                    {
-                        push_point = scan;
-                        point_check++;
-                        //printf("push_point : %d, scan : %d\n", push_point, scan);
-                        break;
-                    }
+                        //printf("index_tlist : %d, scan : %d\n", index_tlist, scan);
+                        //printf("tlist[scan] : %s str1 : %s\n", tlist[scan].name , str1);
+                        if(strcmp(tlist[scan].name, str1) >= 0) // equal name - (diffrent person) including 
+                        {
+                                push_point = scan;
+                                point_check++;
+                                //printf("push_point : %d, scan : %d\n", push_point, scan);
+                                break;
+                        }
                 }
 
                 int flag = 0;
