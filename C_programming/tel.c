@@ -13,24 +13,32 @@ struct tinfo
 tinfo tlist[MAXWORD]; // tel info arrays
 int index_tlist = 0; // count of tlist
 
-
-
 void sorting(void) // tlist sorting by alphabetical order
 {
-    int index_min = 0;
     tinfo temp;
     for (int i = 0; i < index_tlist; i++)
     {
+        int index_min = i;
         for (int index = i; index < index_tlist; index++)
         {
-            if (strcmp(tlist[index].name, tlist[index+1].name) > 0)
+            if (index_min != index && strcmp(tlist[index_min].name, tlist[index].name) > 0)
             {
-                temp = tlist[index];
-                tlist[index] = tlist[index+1];
-                tlist[index+1] = temp;
+                index_min = index;
             }
         }
+        //printf("index_min : %d\n", index_min);
+        temp = tlist[index_min];
+        tlist[index_min] = tlist[i];
+        tlist[i] = temp;
     }
+
+    FILE *fp = fopen("data.txt", "w+");
+    for (int n = 0; n < index_tlist; n++)
+    {
+        fprintf(fp,"%s:%s:%s\n", tlist[n].name, tlist[n].phone, tlist[n].memo);
+    }
+    
+    fclose(fp);
 }
 
 int search(char * keyword)
@@ -194,13 +202,13 @@ void delete(char * keyword)
         for (int i = 0; i < index_d_array; i++)
         {
             index_del = d_array[i];
-            printf("%d %s %s %s\n", index_del+1, tlist[index_del].name, tlist[index_del].phone, tlist[index_del].memo);
+            printf("%d %s %s %s\n", i+1, tlist[index_del].name, tlist[index_del].phone, tlist[index_del].memo);
         }
         printf("which one? : ");
         scanf("%d", &check);
         check--; // check is used for index
 
-        if (check >= 0)
+        if (check >= 0 && check < index_d_array)
         {
             // tlist modifying
             index_del = d_array[check]; 
@@ -282,6 +290,8 @@ int main(int argc, char * argv[]) //commandline arguments
         
     }
     temp_fp = strtok(temp, ":"); // last tok
+
+    sorting();
     
     // for debug
     //for (int i = 0; i < index_tlist; i++)
