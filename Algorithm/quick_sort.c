@@ -11,7 +11,7 @@ void arr_element_swap(int *arr, int idx1, int idx2)
     arr[idx1] = temp;
 }
 
-void partition_by_rightmost_pivot(int * arr, int s, int e)
+int partition_by_rightmost_pivot(int * arr, int s, int e)
 {
     // s : start point, e : end point
 
@@ -31,17 +31,17 @@ void partition_by_rightmost_pivot(int * arr, int s, int e)
     return i+1;
 }
 
-void partition_by_leftmost_pivot(int * arr, int s, int e)
+int partition_by_leftmost_pivot(int * arr, int s, int e)
 {
 
 }
 
-void partition_by_median_pivot(int * arr, int s, int e)
+int partition_by_median_pivot(int * arr, int s, int e)
 {
 
 }
 
-void partition_by_my_pivot(int * arr, int s, int e)
+int partition_by_my_pivot(int * arr, int s, int e)
 {
 
 }
@@ -62,4 +62,8 @@ int main()
     int arr[5] = {1,5,3,2,4};
     partition = &partition_by_rightmost_pivot;
     quick_sort(arr, 0, 4);
+    for (int i = 0; i < 5; i++) {
+        printf("sorted : %d \n",arr[i] );
+    }
+    
 }
