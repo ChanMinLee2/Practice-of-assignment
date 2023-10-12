@@ -6,19 +6,22 @@ void merge(int * arr, int s, int m, int e)
 
     int n1 = m - s + 1; // left array's size
     int n2 = e - m;     // right array's size
-    int left_arr[n1+1]; 
-    int right_arr[n2+1];
+    printf("n1 : %d, n2 : %d\n\n", n1, n2);
+    int left_arr[n1]; 
+    int right_arr[n2];
 
     // first for loop - copy arr values to left
     for (int i = 0; i < n1; i++) 
     {
-        left_arr[i] = arr[s + i - 1];
+        left_arr[i] = arr[s + i];
+        printf("left i : %d - left_arr[i] : %d - arr[s+i] : %d\n", i, left_arr[i], arr[s+i]);
     }
     
     // second for loop - copy arr values to right
     for (int j = 0; j < n2; j++)
     {
-        right_arr[j] = arr[m + j];
+        right_arr[j] = arr[m + j + 1];
+        printf("right %d : %d : %d \n", j, right_arr[j], arr[m+j+1]);
     }
 
     left_arr[n1] = 2147483647; // 정수형 최댓값
@@ -27,7 +30,7 @@ void merge(int * arr, int s, int m, int e)
     int idx_left = 0; // ppt상 i
     int idx_right = 0; // ppt상 j
 
-    for (int k = s; k < e; k++)
+    for (int k = s; k <= e; k++)
     {
         if (left_arr[idx_left] <= right_arr[idx_right])
         {
@@ -58,4 +61,7 @@ int main(void)
 {
     int arr[5] = {1,5,3,2,4};
     merge_sort(arr, 0, 4);
+    for (int i = 0; i < 5; i++) {
+        printf("sorted : %d \n",arr[i] );
+    }
 }
