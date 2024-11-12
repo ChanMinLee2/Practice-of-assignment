@@ -1,2 +1,2 @@
 # Practice-of-assignment
-assignment of my university's programming class  
+assignment of my university's programming classes
